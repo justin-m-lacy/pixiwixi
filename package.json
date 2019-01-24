@@ -1,0 +1,22 @@
+{
+  "name": "pixiwixi",
+  "version": "0.5.0",
+  "description": "ui classes for pixi.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "pixi.js": "^4.8.5"
+  },
+  "keywords": [
+    "pixi.js",
+    "pixi",
+    "ui",
+    "window",
+    "button",
+    "checkbox"
+  ],
+  "author": "Justin Lacy",
+  "license": "ISC"
+}
