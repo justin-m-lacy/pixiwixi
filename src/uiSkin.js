@@ -31,7 +31,7 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 
 		this._defaultStyle.fill = v;
 		this.emit( 'skin-changed', 'fontColor');
-	
+
 	}
 
 	/**
@@ -113,8 +113,8 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	}
 
 	/**
-	 * 
-	 * @param {Object} [vars=null] 
+	 *
+	 * @param {Object} [vars=null]
 	 */
 	constructor( vars=null ){
 
@@ -134,7 +134,7 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 
 	/**
 	 * Just creates a sprite with a click listener. Included for completeness.
-	 * @param {PIXI.Texture} tex 
+	 * @param {PIXI.Texture} tex
 	 * @param {Function} [onClick=null] - function to call on click.
 	 * @param {*} [context=null] - context of the event listener.
 	 */
@@ -145,23 +145,23 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 		clip.interactive = true;
 
 		if ( onClick ) clip.on( 'click', onClick, context );
-	
+
 		return clip;
 
 	}
 
 	/**
-	 * 
-	 * @param {string} str 
+	 *
+	 * @param {string} str
 	 * @param {Function} [onClick=null]
-	 * @param {*} [context=null] 
+	 * @param {*} [context=null]
 	 */
 	makeTextButton( str, onClick=null, context=null ) {
 
 		let clip = new PIXI.Container();
 
 		console.assert( this._box, 'Skin box is null' );
-		let mesh = new PIXI.mesh.NineSlicePlane( this._box );
+		let mesh = new PIXI.Mesh.NineSlicePlane( this._box );
 
 		console.assert( this._smallStyle, 'small style null');
 		let text = this.makeSmallText(str);
@@ -184,9 +184,9 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	}
 
 	/**
-	 * 
-	 * @param {string} str 
-	 * @param {Boolean} [clone=false] 
+	 *
+	 * @param {string} str
+	 * @param {Boolean} [clone=false]
 	 */
 	makeLargeText( str, clone=false ) {
 		if ( clone === true ) return new Text( str, this._largeStyle.clone() );
@@ -194,9 +194,9 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	}
 
 	/**
-	 * 
-	 * @param {string} str 
-	 * @param {Boolean} [clone=false] 
+	 *
+	 * @param {string} str
+	 * @param {Boolean} [clone=false]
 	 */
 	makeSmallText( str, clone=false ) {
 		if ( clone === true ) return new Text( str, this._smallStyle.clone() );
@@ -209,9 +209,9 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	}
 
 	/**
-	 * 
-	 * @param {string} label 
-	 * @param {Boolean} [checked=false] 
+	 *
+	 * @param {string} label
+	 * @param {Boolean} [checked=false]
 	 */
 	makeCheckbox( label, checked=false ) {
 		return new Checkbox( this._skinData['box'], this._skinData['check'], label, checked );
@@ -225,8 +225,8 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 		console.assert( backTex !=null && barTex != null, 'Missing Skin box or bar: ' + backTex + ' , ' + barTex );
 
 		let p = new ProgressBar(
-			new PIXI.mesh.NineSlicePlane( backTex ),
-			new PIXI.mesh.NineSlicePlane( barTex )
+			new PIXI.Mesh.NineSlicePlane( backTex ),
+			new PIXI.Mesh.NineSlicePlane( barTex )
 		);
 
 		return p;
@@ -234,8 +234,8 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	}
 
 	/**
-	 * 
-	 * @param {number} [width=200] 
+	 *
+	 * @param {number} [width=200]
 	 * @param {number} [height=200]
 	 */
 	makePane( width=200, height=200 ) {
@@ -243,7 +243,7 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 		let data = this._skinData['frame'];
 		if ( !(data instanceof PIXI.Texture ) ) return null;
 
-		let pane = new PIXI.mesh.NineSlicePlane( data );
+		let pane = new PIXI.Mesh.NineSlicePlane( data );
 		pane.width = width;
 		pane.height = height;
 
@@ -252,27 +252,27 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	}
 
 	/**
-	 * 
-	 * @param {string} key 
-	 * @param {number} left 
-	 * @param {number} top 
-	 * @param {number} right 
-	 * @param {number} bottom 
+	 *
+	 * @param {string} key
+	 * @param {number} left
+	 * @param {number} top
+	 * @param {number} right
+	 * @param {number} bottom
 	 */
 	makeNineSlice( key, left=12, top=8, right=12, bottom=8 ) {
 
 		let data = this._skinData[key];
 		if ( !(data instanceof PIXI.Texture ) ) return null;
 
-		return new PIXI.mesh.NineSlicePlane( data, left, top, right, bottom );
+		return new PIXI.Mesh.NineSlicePlane( data, left, top, right, bottom );
 
 	}
 
 	/**
 	 * Generate a texture from the given Graphics and add it
 	 * to the skin under the given key.
-	 * @param {string} key 
-	 * @param {Graphics} g 
+	 * @param {string} key
+	 * @param {Graphics} g
 	 */
 	addAsTexture( key, g ) {
 		return this._skinData[key] = g.generateCanvasTexture();
@@ -282,7 +282,7 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	 * Set the skinning data for a given key. The data can be style information,
 	 * a texture, or any information relevant to ui display.
 	 * A 'skin-changed' event will be fired, notifying listeners of the change.
-	 * @param {string} key 
+	 * @param {string} key
 	 * @param {*} obj
 	 */
 	setSkinData( key, obj ) {
@@ -294,7 +294,7 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 
 	/**
 	 * Get the skinning data associated with a key.
-	 * @param {string} key 
+	 * @param {string} key
 	 */
 	getSkinData( key ) {
 		return this._skinData[key];

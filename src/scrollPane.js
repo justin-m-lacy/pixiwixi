@@ -11,39 +11,39 @@ import { Anchors, UiSkin } from '../index';
 export default class ScrollPane extends Pane {
 
 	/**
-	 * {DisplayObject}
+	 * @property {DisplayObject}
 	 */
 	get content() { return this._content; }
 
 	/**
-	 * {DisplayObject}
+	 * @property {DisplayObject}
 	 */
 	get mask() { return this._content.mask; }
 
 	/**
-	 * {Scrollbar} Returns the scrollbar, if only one is present, or the vertical
+	 * @property {Scrollbar} Returns the scrollbar, if only one is present, or the vertical
 	 * scrollbar, if both are.
 	 */
 	get scrollbar() { return this._vertical || this._horizontal; }
 
 	/**
-	 * {Scrollbar} Gets the horizontal scrollbar, if any.
+	 * @property {Scrollbar} Gets the horizontal scrollbar, if any.
 	 */
 	get horizontal(){ return this._horizontal; }
 
 	/**
-	 * {Scrollbar} Gets the vertical scrollbar, if any.
+	 * @property {Scrollbar} Gets the vertical scrollbar, if any.
 	 */
 	get vertical() { return this._vertical; }
 
 	/**
-	 * {number} [axes=ScrollAxis.VERTICAL] The axes for which scrollbars are enabled.
+	 * @property {number} [axes=ScrollAxis.VERTICAL] The axes for which scrollbars are enabled.
 	 * Readonly. To change the scrollbars, use setScrollbars()
 	 */
 	get axes() { return this._axes; }
 
 	/**
-	 * {number}
+	 * @property {number}
 	 */
 	get width() { return this._width; }
 	set width(v) {
@@ -57,7 +57,7 @@ export default class ScrollPane extends Pane {
 	}
 
 	/**
-	 * {number}
+	 * @property {Number}
 	 */
 	get height(){return this._height;}
 	set height(v) {

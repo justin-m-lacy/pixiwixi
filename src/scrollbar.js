@@ -65,6 +65,9 @@ export default class Scrollbar extends Pane {
 
 	}
 
+	/**
+	 * {number}
+	 */
 	get height() { return this._height; }
 	set height(v) {
 
@@ -78,6 +81,9 @@ export default class Scrollbar extends Pane {
 
 	}
 
+	/**
+	 * {number}
+	 */
 	get width() { return this._width; }
 	set width(v) { this._width =v;
 	
@@ -97,7 +103,7 @@ export default class Scrollbar extends Pane {
 
 
 	/**
-	 * {Boolean} [autoSizeThumb] - true if thumb should resize to match
+	 * {boolean} [autoSizeThumb] - true if thumb should resize to match
 	 * the scrollable size. true by default.
 	 */
 	get autoSizeThumb() { return this._autoSizeThumb; }

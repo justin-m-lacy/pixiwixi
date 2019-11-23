@@ -63,13 +63,13 @@ export default class ProgressBar extends Container {
 		this._loading = true;
 		this._complete = false;
 
-		PIXI.ticker.shared.add( this.updateProgress, this );
+		PIXI.Ticker.shared.add( this.updateProgress, this );
 
 	}
 
 	complete() {
 
-		PIXI.ticker.shared.remove( this.updateProgress, this );
+		PIXI.Ticker.shared.remove( this.updateProgress, this );
 		this._complete = true;
 		this._loading = false;
 
@@ -77,7 +77,7 @@ export default class ProgressBar extends Container {
 
 	stop() {
 
-		PIXI.ticker.shared.remove( this.updateProgress, this );
+		PIXI.Ticker.shared.remove( this.updateProgress, this );
 		this._loading = false;
 		this._complete = false;
 		this._loader = null;

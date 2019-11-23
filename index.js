@@ -14,13 +14,15 @@ import Button from './src/button';
 import Scrollbar from './src/scrollbar';
 import Pane from './src/pane';
 import ScrollPane from './src/scrollPane';
+import CounterFld from './src/counterFld';
 import Window from './src/window';
 import Checkbox from './src/checkbox';
 import UiSkin from './src/uiSkin';
 import ProgressBar from './src/progressBar';
 import Layout from './src/layout';
 
-export { Button, Scrollbar, Pane, Checkbox, Window, ScrollPane, UiSkin, ProgressBar, Layout};
+
+export { Button, Scrollbar, Pane, Checkbox, Window, ScrollPane, UiSkin, ProgressBar, Layout, CounterFld };
 
 export const Flow = {
 	VERTICAL:1,
@@ -46,60 +48,60 @@ export default {
 
 	/**
 	 * Enable scroll wheel events.
-	 * @param {*} app 
+	 * @param {*} app
 	 */
 	enableWheel( app ) {
 
 		if ( this._wheelEnabled === true ) return;
-	
+
 			let mgr = app.renderer.plugins.interaction;
 			this._wheelEnabled = true;
-	
+
 			// store to remove later.
 			this._wheelFunc = (e)=>{
-	
+
 				let evt = new PIXI.interaction.InteractionEvent();
 				let data = new PIXI.interaction.InteractionData();
-		
+
 				data.originalEvent = e;
 				data.deltaY = e.deltaY*this.wheelScale;
 				data.deltaX = e.deltaX*this.wheelScale;
-	
+
 				data.originalEvent = e;
-	
+
 				Object.assign( data, mgr.eventData );
-	
+
 				let target = evt.target = data.target;
 				evt.data = data;
 				evt.type = 'wheel';
-	
+
 				while ( target ) {
-	
+
 					if ( target.interactive === true ) {
 						evt.currentTarget = target;
 						target.emit( 'wheel', evt );
 					}
 					target = target.parent;
-	
+
 				}
-	
+
 			};
-	
-			app.view.addEventListener( 'wheel', _wheelFunc );	
+
+			app.view.addEventListener( 'wheel', _wheelFunc );
 	},
-	
+
 	/**
 	* Disable wheel events.
 	* @param {PIXI.Application} app - app for dispatching events.
 	*/
 	disableWheel( app ) {
-	
+
 			if ( this._wheelEnabled === true ) {
 				app.view.removeEventListener( 'wheel', _wheelFunc );
 				this._wheelFunc = null;
 				this._wheelEnabled = false;
 		}
-	
+
 	}
 
 };

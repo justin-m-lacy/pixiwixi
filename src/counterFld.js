@@ -1,4 +1,4 @@
-import { Text, ticker } from 'pixi.js';
+import { Text, Ticker } from 'pixi.js';
 
 const MIN_COUNT_DIST = 2;
 /**
@@ -19,10 +19,10 @@ export default class CounterField extends Text {
 	set showCount(v) { this._showCount = v; }
 
 	/**
-	 * 
-	 * @param {string} [text=''] 
-	 * @param {number} [startVal=0] 
-	 * @param {Object} styleVars 
+	 *
+	 * @param {string} [text='']
+	 * @param {number} [startVal=0]
+	 * @param {Object} styleVars
 	 */
 	constructor( text='', startVal=0, styleVars ) {
 
@@ -30,14 +30,14 @@ export default class CounterField extends Text {
 
 		this._labelText = text;
 		this._value = startVal;
-	
+
 		this._animating = false;
 
 	}
 
 	/**
-	 * 
-	 * @param {number} value 
+	 *
+	 * @param {number} value
 	 */
 	update( value ) {
 
@@ -48,7 +48,7 @@ export default class CounterField extends Text {
 			// already animating.
 			if ( this._animating === true ) return;
 			else if ( Math.abs( value - this.value ) > MIN_COUNT_DIST ) {
-	
+
 				this.startAnimation();
 				this.animate(1);
 				return;
@@ -79,13 +79,13 @@ export default class CounterField extends Text {
 	}
 
 	endAnimation() {
-		ticker.shared.remove( this.animate, this );
+		Ticker.shared.remove( this.animate, this );
 		this._animating = false;
 	}
 
 	startAnimation() {
 		this._animating = true;
-		ticker.shared.add( this.animate, this );
+		Ticker.shared.add( this.animate, this );
 	}
 
 }
