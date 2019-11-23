@@ -18,22 +18,31 @@ export default class CounterField extends Text {
 	get showCount() { return this._showCount; }
 	set showCount(v) { this._showCount = v; }
 
+	get label(){return this._label;}
+	set label(v){
+		this._label=v;
+		this.text = this.curTex();
+	}
+
 	/**
 	 *
 	 * @param {string} [text='']
 	 * @param {number} [startVal=0]
 	 * @param {Object} styleVars
 	 */
-	constructor( text='', startVal=0, styleVars ) {
+	constructor( label='', startVal=0, styleVars ) {
 
-		super( text + ': ' + startVal, styleVars );
+		super( '', styleVars );
 
-		this._labelText = text;
+		this._label = label;
 		this._value = startVal;
 
+		this.text = this.curTex();
 		this._animating = false;
 
 	}
+
+	curTex(){return this._label ? (this._label + ': ' + this._value ) : this._value; }
 
 	/**
 	 *
@@ -58,7 +67,7 @@ export default class CounterField extends Text {
 		}
 
 		this.value = value;
-		this.text = this._labelText + ': ' + this.value;
+		this.text = this.curTex();
 
 	}
 
@@ -74,7 +83,7 @@ export default class CounterField extends Text {
 			this.value += (this._targetVal - this.value )/10;
 
 		}
-		this.text = this._labelText + ': ' + Math.round(this.value );
+		this.text = this.curTex();
 
 	}
 
