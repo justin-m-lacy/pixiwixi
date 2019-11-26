@@ -83,15 +83,25 @@ export default class Pane extends Container {
 	/**
 	 * Add content vertically from last child.
 	 * @param {DisplayObject} clip
-	 * @param {number} padX
-	 * @param {number} padY
+	 * @param {number} [padX=0]
+	 * @param {number} [padY=0]
+	 * @param {Container} [parent=null]
 	 */
-	addContentY( clip, padX=0, padY=0 ) {
+	addContentY( clip, padX=0, padY=0, parent=null ) {
 
-		let lastY = this.children.length > 0 ? this.children[ this.children.length-1].position.y : 0;
-		clip.position.set( padX, lastY + padY );
+		if ( !parent ) parent = this;
 
-		this.addChild( clip );
+		var lastY = padY;
+		if ( parent.children.length > 0 ) {
+
+			let last = parent.children[ parent.children.length-1 ];
+			lastY += (last.y + last.height );
+
+		}
+
+		clip.position.set( padX, lastY );
+
+		parent.addChild( clip );
 
 	}
 
@@ -132,14 +142,22 @@ export default class Pane extends Container {
 
 	}
 
+	centerX( clip ) {
+		clip.x = 0.5*(this._width - clip.width );
+	}
+
+	centerY(clip){
+		clip.y = 0.5*(this._width-clip.width );
+	}
+
 	/**
 	 * Center a clip in the view.
 	 * @param {DisplayObject} clip
 	 */
-	center( clip ) {
+	center( clip, pctX=0.5, pctY=0.5 ) {
 
-		clip.x = 0.5*(this._width - clip.width );
-		clip.y = 0.5*(this._height - clip.height );
+		clip.x = pctX*(this._width - clip.width );
+		clip.y = pctY*(this._height - clip.height );
 
 	}
 
