@@ -43,9 +43,9 @@ export default class Pane extends Container {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param {PIXI.Application} app
-	 * @param {Object} [opts=null] 
+	 * @param {Object} [opts=null]
 	 */
 	constructor( app, opts=null ) {
 
@@ -77,7 +77,22 @@ export default class Pane extends Container {
 		this.on( 'pointerdown', (e)=>e.stopPropagation() );
 
 		this._showing = false;
-	
+
+	}
+
+	/**
+	 * Add content vertically from last child.
+	 * @param {DisplayObject} clip
+	 * @param {number} padX
+	 * @param {number} padY
+	 */
+	addContentY( clip, padX=0, padY=0 ) {
+
+		let lastY = this.children.length > 0 ? this.children[ this.children.length-1].position.y : 0;
+		clip.position.set( padX, lastY + padY );
+
+		this.addChild( clip );
+
 	}
 
 	/**
@@ -105,7 +120,7 @@ export default class Pane extends Container {
 	/**
 	 * Ensure the clip is padded from the pane edge's by
 	 * the padding amount.
-	 * @param {DisplayObject} clip 
+	 * @param {DisplayObject} clip
 	 */
 	pad( clip ) {
 
@@ -119,7 +134,7 @@ export default class Pane extends Container {
 
 	/**
 	 * Center a clip in the view.
-	 * @param {DisplayObject} clip 
+	 * @param {DisplayObject} clip
 	 */
 	center( clip ) {
 

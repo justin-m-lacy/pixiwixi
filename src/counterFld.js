@@ -42,7 +42,7 @@ export default class CounterField extends Text {
 
 	}
 
-	curTex(){return this._label ? (this._label + ': ' + this._value ) : this._value; }
+	curTex(){return this._label ? (this._label + ': ' + Math.floor(this._value) ) : Math.floor(this._value); }
 
 	/**
 	 *
@@ -56,7 +56,7 @@ export default class CounterField extends Text {
 
 			// already animating.
 			if ( this._animating === true ) return;
-			else if ( Math.abs( value - this.value ) > MIN_COUNT_DIST ) {
+			else if ( Math.abs( value - this._value ) > MIN_COUNT_DIST ) {
 
 				this.startAnimation();
 				this.animate(1);
@@ -66,21 +66,21 @@ export default class CounterField extends Text {
 
 		}
 
-		this.value = value;
+		this._value = value;
 		this.text = this.curTex();
 
 	}
 
-	animate(delta){
+	animate(){
 
-		if ( Math.abs(this._targetVal- this.value ) <= MIN_COUNT_DIST ) {
+		if ( Math.abs(this._targetVal- this._value ) <= MIN_COUNT_DIST ) {
 
-			this.value = this._targetVal;
+			this._value = this._targetVal;
 			this.endAnimation();
 
 		} else {
 
-			this.value += (this._targetVal - this.value )/10;
+			this._value += (this._targetVal - this.value )/10;
 
 		}
 		this.text = this.curTex();
