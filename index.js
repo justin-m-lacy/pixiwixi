@@ -20,9 +20,9 @@ import Checkbox from './src/checkbox';
 import UiSkin from './src/uiSkin';
 import ProgressBar from './src/progressBar';
 import Layout from './src/layout';
+import MultiPane from './src/panes/multiPane';
 
-
-export { Button, Scrollbar, Pane, Checkbox, Window, ScrollPane, UiSkin, ProgressBar, Layout, CounterFld };
+export { Button, Scrollbar, Pane, Checkbox, Window, ScrollPane, UiSkin, ProgressBar, Layout, CounterFld, MultiPane };
 
 export const Flow = {
 	VERTICAL:1,

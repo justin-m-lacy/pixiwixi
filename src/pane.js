@@ -65,8 +65,8 @@ export default class Pane extends Container {
 
 		}
 
-		this._width = this._width || 200;
-		this._height = this._height || 200;
+		if ( !this._width ) this._width = super.width;
+		if (!this._height ) this._height = super.height;
 
 		if ( this.bg !== false && this.skin ) {
 			this._bg = this.skin.makePane( this._width, this._height );
