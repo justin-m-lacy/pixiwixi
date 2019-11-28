@@ -89,13 +89,17 @@ export default class Pane extends Container {
 	 */
 	addContentY( clip, padX=0, padY=0, parent=null ) {
 
+		var lastY = padY;
+
+		if ( clip.anchor ) lastY += clip.anchor.y*clip.height;
+
 		if ( !parent ) parent = this;
 
-		var lastY = padY;
 		if ( parent.children.length > 0 ) {
 
 			let last = parent.children[ parent.children.length-1 ];
-			lastY += (last.y + last.height );
+			if ( last.anchor ) lastY += last.y + (1 - last.anchor.y)*last.height;
+			else lastY += last.y + last.height;
 
 		}
 
