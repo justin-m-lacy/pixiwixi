@@ -43,7 +43,7 @@ export default class Scrollbar extends Pane {
 	}
 
 	/**
-	 * {DisplayObject}
+	 * {Container}
 	 */
 	get thumb() { return this._thumb; }
 	set thumb(v) { this._thumb = v; }
@@ -53,8 +53,8 @@ export default class Scrollbar extends Pane {
 	 * If no value is specified, the thumb will change size based
 	 * on the ratio of pageSize to totalSize.
 	 */
-	get thumbSize() { return this._thumbSize; }
-	set thumbSize(v) {
+	get thumbSize(): number { return this._thumbSize; }
+	set thumbSize(v: number) {
 
 		this._thumbSize = v;
 		if (this._axis === ScrollAxis.HORIZONTAL) {
@@ -103,9 +103,6 @@ export default class Scrollbar extends Pane {
 	get autoSizeThumb() { return this._autoSizeThumb; }
 	set autoSizeThumb(v) { this._autoSizeThumb = v; }
 
-	/**
-	 * {DisplayObject} clip being scrolled.
-	 */
 	get target() { return this._target; }
 	set target(v) {
 
@@ -135,14 +132,15 @@ export default class Scrollbar extends Pane {
 	}
 
 	/**
-	 * {string} - If a scroll target is set, the property being scrolled on the target,
+	 * {string} - The property being scrolled on the scroll target,
 	 * e.g. 'x', or 'y'
 	 */
 	get scrollProp() { return this._scrollProp; }
 	set scrollProp(v) { this._scrollProp = v; }
 
 	/**
-	 * {string} The property of the target that defines the maximum scrollable area. e.g. 'width' or 'height'
+	 * {string} The property of the target that defines the maximum scrollable area.
+	 * e.g. 'width' or 'height'
 	 */
 	get sizeProp() { return this._sizeProp; }
 	set sizeProp(v) { this._sizeProp = v; }
@@ -179,8 +177,10 @@ export default class Scrollbar extends Pane {
 	 * @param {Object} [opts=null]
 	 * @param {UISkin} opts.skin
 	 */
-	constructor(app: Application,
-		opts?: ScrollbarOpts) {
+	constructor(
+		app: Application,
+		opts?: ScrollbarOpts
+	) {
 
 		super(app, opts);
 
@@ -208,13 +208,9 @@ export default class Scrollbar extends Pane {
 		}
 		this._pageSize = opts?.pageSize ?? this._axisLength ?? 240;
 
-		this._thumb = this._makeThumb();
+		this._thumb = this.makeThumb();
 		this.refresh();
 
-		//console.log('axisprop: ' + this._axisProp);
-		//console.log('axislen: ' + this._axisLength);
-		//console.log('axis: ' + this._axis );
-		//console.log('height: ' + this.height );
 
 		if (this.bg) {
 			this.bg.interactive = true;
@@ -252,7 +248,7 @@ export default class Scrollbar extends Pane {
 	 * Scroll with mouse wheel.
 	 * @param {} evt 
 	 */
-	wheelEvent(evt: WheelEvent) {
+	protected wheelEvent(evt: WheelEvent) {
 
 		this._thumb[this._axisProp] += evt.deltaY;
 		this.scroll();
@@ -349,7 +345,7 @@ export default class Scrollbar extends Pane {
 	/**
 	 * Set thumb position to correct location based on target position.
 	 */
-	positionThumb() {
+	protected positionThumb() {
 		if (this._target != null) {
 			this.thumb[this._axisProp] =
 				this._target[this._scrollProp] * (this._pageSize - this.thumbSize) / (this._pageSize - this._target[this._sizeProp])
@@ -358,7 +354,7 @@ export default class Scrollbar extends Pane {
 		}
 	}
 
-	barClick(evt: InteractionEvent) {
+	protected barClick(evt: InteractionEvent) {
 
 		evt.data.getLocalPosition(this, this._dragPt);
 
@@ -377,7 +373,7 @@ export default class Scrollbar extends Pane {
 	/**
 	 * Create the scrollbar thumb.
 	 */
-	_makeThumb() {
+	protected makeThumb() {
 
 		console.assert(this.skin != null, 'scrollbar.js: this.skin: ' + this.skin);
 		console.assert(this.skin!.box != null, 'scrollbar.js: this.skin.box: ' + this.skin!.box);
@@ -413,7 +409,7 @@ export default class Scrollbar extends Pane {
 	 * 
 	 * @param {*} evt 
 	 */
-	startDrag(evt: InteractionEvent) {
+	protected startDrag(evt: InteractionEvent) {
 
 		this._dragging = true;
 		evt.data.getLocalPosition(this, this._dragPt);
@@ -428,7 +424,7 @@ export default class Scrollbar extends Pane {
 	 * 
 	 * @param {*} evt 
 	 */
-	onDrag(evt: InteractionEvent) {
+	protected onDrag(evt: InteractionEvent) {
 
 		if (this._dragging !== true) return;
 
@@ -444,7 +440,7 @@ export default class Scrollbar extends Pane {
 	 * 
 	 * @param {*} evt 
 	 */
-	endDrag(evt: InteractionEvent) {
+	protected endDrag(evt: InteractionEvent) {
 
 		this.thumb.on('pointermove', this.onDrag, this);
 		this._dragging = false;
@@ -454,10 +450,10 @@ export default class Scrollbar extends Pane {
 	 * Current scroll prop value of target.
 	 */
 	getTargetValue() {
-		return (this._target && this._scrollProp) ? this._target[this._scrollProp] : 0;
+		return (this._target) ? this._target[this._scrollProp] : 0;
 	}
 	setTargetValue(v: number) {
-		if (this._target && this._scrollProp) this._target[this._scrollProp] = v;
+		if (this._target) this._target[this._scrollProp] = v;
 	}
 
 	setThumbSize() {
