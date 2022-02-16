@@ -1,11 +1,11 @@
-import { Container, Sprite, Point } from "pixi.js";
+import { Container, Sprite, Point, Application, DisplayObject, NineSlicePlane, InteractionEvent } from 'pixi.js';
 import * as PIXI from 'pixi.js';
-import Pane from "./pane";
-import UiSkin from "./uiSkin";
+import Pane from "./panes/pane";
+import UiSkin from "./ui-skin";
 
-export const ScrollAxis = {
-	VERTICAL:1,
-	HORIZONTAL:2
+export enum ScrollAxis {
+	VERTICAL = 1,
+	HORIZONTAL
 };
 
 export default class Scrollbar extends Pane {
@@ -18,7 +18,7 @@ export default class Scrollbar extends Pane {
 	set axis(v) {
 
 		this._axis = v;
-		if ( v === ScrollAxis.HORIZONTAL ) {
+		if (v === ScrollAxis.HORIZONTAL) {
 
 			this._axisProp = 'x';
 			this._sizeProp = 'width';
@@ -60,20 +60,16 @@ export default class Scrollbar extends Pane {
 	set thumbSize(v) {
 
 		this._thumbSize = v;
-		if ( this._axis === ScrollAxis.HORIZONTAL ) this._thumb.width = v;
+		if (this._axis === ScrollAxis.HORIZONTAL) this._thumb.width = v;
 		else this._thumb.height = v;
 
 	}
 
-	/**
-	 * {number}
-	 */
-	get height() { return this._height; }
-	set height(v) {
+	setHeight(v: number) {
 
 		// test against !horizontal in case the axis hasnt been set yet,
 		// though it probably doesn't matter.
-		if ( this._axis !== ScrollAxis.HORIZONTAL ) {
+		if (this._axis !== ScrollAxis.HORIZONTAL) {
 			this._axisLength = v;
 		}
 
@@ -81,13 +77,10 @@ export default class Scrollbar extends Pane {
 
 	}
 
-	/**
-	 * {number}
-	 */
-	get width() { return this._width; }
-	set width(v) { this._width =v;
-	
-		if ( this._axis === ScrollAxis.HORIZONTAL ) {
+	setWidth(v: number) {
+		this._width = v;
+
+		if (this._axis === ScrollAxis.HORIZONTAL) {
 			this._axisLength = v;
 		}
 		super.width = v;
@@ -99,7 +92,7 @@ export default class Scrollbar extends Pane {
 	 * area is larger than the scrollable area.
 	 */
 	get autoHide() { return this._autoHide; }
-	set autoHide(v) { this._autoHide=v;}
+	set autoHide(v) { this._autoHide = v; }
 
 
 	/**
@@ -107,7 +100,7 @@ export default class Scrollbar extends Pane {
 	 * the scrollable size. true by default.
 	 */
 	get autoSizeThumb() { return this._autoSizeThumb; }
-	set autoSizeThumb(v) { this._autoSizeThumb=v;}
+	set autoSizeThumb(v) { this._autoSizeThumb = v; }
 
 	/**
 	 * {DisplayObject} clip being scrolled.
@@ -115,26 +108,26 @@ export default class Scrollbar extends Pane {
 	get target() { return this._target; }
 	set target(v) {
 
-		if ( this._target ) {
-			this._target.removeListener( 'wheel', this.wheelEvent, this );
+		if (this._target) {
+			this._target.removeListener('wheel', this.wheelEvent, this);
 		}
 
-		this._target=v;
+		this._target = v;
 
-		if ( v ) {
+		if (v) {
 
-			if ( v.mask ) {
+			if (v.mask) {
 
-				if ( this._axis === ScrollAxis.HORIZONTAL ) {
+				if (this._axis === ScrollAxis.HORIZONTAL) {
 					this._pageSize = v.mask.width;
 				} else {
 					this._pageSize = v.mask.height;
 				}
 
 			}
-			if ( this._autoSizeThumb === true ) this.setThumbSize();
+			if (this._autoSizeThumb === true) this.setThumbSize();
 
-			v.on('wheel', this.wheelEvent, this );
+			v.on('wheel', this.wheelEvent, this);
 
 		}
 
@@ -148,33 +141,26 @@ export default class Scrollbar extends Pane {
 	set scrollProp(v) { this._scrollProp = v; }
 
 	/**
-	 * {string} The property of the target giving the maximum scrollable area. e.g. 'width' or 'height'
+	 * {string} The property of the target that defines the maximum scrollable area. e.g. 'width' or 'height'
 	 */
 	get sizeProp() { return this._sizeProp; }
-	set sizeProp(v) { this._sizeProp = v;}
+	set sizeProp(v) { this._sizeProp = v; }
 
-	//get minProp() { return this._minProp; }
-	//set minProp(v) { this._minProp = v;}
+	_sizeProp: 'width' | 'height';
+	_scrollProp: 'x' | 'y';
+	_axisProp: 'x' | 'y';
+	_target?: DisplayObject;
+	_autoSizeThumb: boolean = true;
+	_autoHide: boolean = false;
+	_thumbSize: number;
+	_pageSize: number;
+	_axisLength: number;
+	_axis: ScrollAxis;
+	_thumb: DisplayObject | NineSlicePlane;
 
-	/**
-	 * {string} - If a scroll target is set, the property of the target that determines
-	 * the maximum scroll value.
-	 */
-	//get maxProp() { return this._maxProp; }
-	//set maxProp(v) { this._maxProp = v;}
-
-	
-	/**
-	 * {number} [scrollMin=0] Minimum scroll value.
-	 */
-	//get scrollMin() { return this._scrollMin; }
-	//set scrollMin(v) { this._scrollMin =v;}
-
-	/**
-	 * {number} [scrollMax=0] Maximum scroll value.
-	 */
-	//get scrollMax() { return this._scrollMax; }
-	//set scrollMax(v) { this._scrollMax=v;}
+	_dragOffset: number = 0;
+	_dragPt: Point = new Point();
+	_dragging: boolean = false;
 
 	/**
 	 * 
@@ -182,28 +168,29 @@ export default class Scrollbar extends Pane {
 	 * @param {Object} [opts=null]
 	 * @param {UISkin} opts.skin
 	 */
-	constructor( app, opts=null ){
+	constructor(app: Application,
+		opts?: { skin?: UiSkin, target?: DisplayObject, autoSizethumb?: boolean, axis?: ScrollAxis, axisLength?: number, pageSize?: number, height?: number, width?: number }) {
 
-		super( app, opts );
+		super(app, opts);
 
-		if ( this._autoSizeThumb !== false ) this._autoSizeThumb = true;
+		if (this._autoSizeThumb !== false) this._autoSizeThumb = true;
 
-		this.axis = this._axis || ScrollAxis.VERTICAL;
-		
-		if ( this._axis === ScrollAxis.HORIZONTAL ) {
+		this._axis = opts?.axis ?? ScrollAxis.VERTICAL;
 
-			if ( this._target && this._target.mask ) this.width = this._target.mask.width;
+		if (this._axis === ScrollAxis.HORIZONTAL) {
+
+			if (this._target && this._target.mask) this.width = this._target.mask.width;
 			this.height = opts.height || this.skin.scrollbarWidth || 18;
 			this._axisLength = this.width;
 
 		} else {
 
-			if ( this._target && this._target.mask ) this.height = this._target.mask.height;
+			if (this._target && this._target.mask) this.height = this._target.mask.height;
 			this.width = opts.width || this.skin.scrollbarWidth || 18;
 			this._axisLength = this.height;
 
 		}
-		this._pageSize = this._pageSize || this._axisLength || 240;
+		this._pageSize = opts?.pageSize ?? this._axisLength || 240;
 
 		this.makeThumb();
 		this.refresh();
@@ -213,26 +200,27 @@ export default class Scrollbar extends Pane {
 		//console.log('axis: ' + this._axis );
 		//console.log('height: ' + this.height );
 
-		this.bg.interactive = true;
-		this.bg.on( 'pointerdown', this.barClick, this );
+		if (this.bg) {
+			this.bg.interactive = true;
+			this.bg.on('pointerdown', this.barClick, this);
+		}
 
 		this.interactive = this.interactiveChildren = true;
 
-		this._dragOffset = 0;
-		this._dragPt = new Point();
-		this._dragging = false;
+		this.on('wheel', this.wheelEvent, this);
 
-		this.on( 'wheel', this.wheelEvent, this );
+	}
 
+	_setScrollAxis() {
 	}
 
 	/**
 	 * Scroll with mouse wheel.
 	 * @param {} evt 
 	 */
-	wheelEvent( evt ) {
+	wheelEvent(evt: WheelEvent) {
 
-		this._thumb[this._axisProp] += evt.data.deltaY;
+		this._thumb[this._axisProp] += evt.deltaY;
 		this.scroll();
 
 	}
@@ -242,21 +230,21 @@ export default class Scrollbar extends Pane {
 	 */
 	refresh() {
 
-		if ( this._autoSizeThumb === true ) this.setThumbSize();
-		if ( !this._target || this._target.visible === false ) {
+		if (this._autoSizeThumb === true) this.setThumbSize();
+		if (!this._target || this._target.visible === false) {
 			console.log('Hiding scrollbar: ' + (this._target ? 'target hidden' : 'no target'));
-			this._visible =false;
+			this._visible = false;
 			return;
 		}
 
 		// size of scrollable area.
 		var scrollSize = this._target[this._sizeProp];
 
-		if ( scrollSize === undefined || scrollSize === null ) {
+		if (scrollSize === undefined || scrollSize === null) {
 			this.visible = false;
 			return;
 		}
-		if ( this._autoHide && scrollSize <= this._pageSize ) {
+		if (this._autoHide && scrollSize <= this._pageSize) {
 			console.log('autohiding scroll bar ');
 			this.visible = false;
 			return;
@@ -265,8 +253,8 @@ export default class Scrollbar extends Pane {
 		var curScroll = this._target[this._scrollProp];
 
 		this.visible = true;
-		if ( curScroll > 0 ) this._target[this._scrollProp] = 0;
-		else if ( curScroll + scrollSize < this._pageSize ) this._target[this._scrollProp] = this._pageSize - scrollSize;
+		if (curScroll > 0) this._target[this._scrollProp] = 0;
+		else if (curScroll + scrollSize < this._pageSize) this._target[this._scrollProp] = this._pageSize - scrollSize;
 
 		this.positionThumb();
 
@@ -283,12 +271,12 @@ export default class Scrollbar extends Pane {
 		let thumbVal = this.thumb[this._axisProp];
 		let thumbSize = this.thumbSize;
 
-		if ( thumbVal < 0 ) this.thumb[this._axisProp] = thumbVal = 0;
-		else if ( thumbVal > (this._pageSize - thumbSize ) ) this.thumb[this._axisProp] = thumbVal = this._pageSize - thumbSize;
+		if (thumbVal < 0) this.thumb[this._axisProp] = thumbVal = 0;
+		else if (thumbVal > (this._pageSize - thumbSize)) this.thumb[this._axisProp] = thumbVal = this._pageSize - thumbSize;
 
-		if ( !this.target || this._pageSize === thumbSize ) return;
+		if (!this.target || this._pageSize === thumbSize) return;
 
-		this._target.y = ( thumbVal /( this._pageSize - thumbSize) )*(this._pageSize - this._target.height );
+		this._target.y = (thumbVal / (this._pageSize - thumbSize)) * (this._pageSize - this._target.height);
 
 	}
 
@@ -311,7 +299,7 @@ export default class Scrollbar extends Pane {
 	pageDown() {
 
 		let scroll = this._target[this._scrollProp] - this._pageSize;
-		if ( scroll < (-this._target[this._sizeProp] + this._pageSize ) ) scroll = -this._target[this._sizeProp] + this._pageSize;
+		if (scroll < (-this._target[this._sizeProp] + this._pageSize)) scroll = -this._target[this._sizeProp] + this._pageSize;
 
 		this._target[this._scrollProp] = scroll;
 
@@ -324,23 +312,23 @@ export default class Scrollbar extends Pane {
 	 */
 	positionThumb() {
 		this.thumb[this._axisProp] =
-			this._target[this._scrollProp] * (this._pageSize - this.thumbSize ) / ( this._pageSize - this._target[this._sizeProp] )
+			this._target[this._scrollProp] * (this._pageSize - this.thumbSize) / (this._pageSize - this._target[this._sizeProp])
 	}
 
 	/**
 	 * Bar area not on thumb was clicked.
 	 * @param {InteractionEvent} evt 
 	 */
-	barClick( evt ) {
+	barClick(evt) {
 
-		evt.data.getLocalPosition( this, this._dragPt );
+		evt.data.getLocalPosition(this, this._dragPt);
 
 		let dragVal = this._dragPt[this._axisProp];
 		let thumbVal = this._thumb[this._axisProp];
 
-		if ( dragVal < thumbVal ) {
+		if (dragVal < thumbVal) {
 			this.pageUp();
-		} else if ( dragVal > thumbVal + this.thumbSize ) {
+		} else if (dragVal > thumbVal + this.thumbSize) {
 			this.pageDown();
 		}
 
@@ -352,29 +340,29 @@ export default class Scrollbar extends Pane {
 	 */
 	makeThumb() {
 
-		console.assert( this.skin != null, 'scrollbar.js: this.skin: ' + this.skin );
-		console.assert( this.skin.box != null, 'scrollbar.js: this.skin.box: ' + this.skin.box);
+		console.assert(this.skin != null, 'scrollbar.js: this.skin: ' + this.skin);
+		console.assert(this.skin!.box != null, 'scrollbar.js: this.skin.box: ' + this.skin!.box);
 
-		let thumb = this._thumb = this.skin.makePane();
+		const thumb = this._thumb = this.skin!.makePane() ?? new DisplayObject;
 		thumb.name = "thumb";
 
-		if ( this._axis === ScrollAxis.HORIZONTAL ) {
+		if (this._axis === ScrollAxis.HORIZONTAL) {
 
 			thumb.height = this.height;
-			thumb.y = ( this.height - thumb.height)/2;
+			thumb.y = (this.height - thumb.height) / 2;
 
 		} else {
 
 			thumb.width = this.width;
-			thumb.x = ( this.width - thumb.width)/2;
-	
-		}
-	
-		thumb.on('pointerdown', this.startDrag, this );
-		thumb.on('pointerup', this.endDrag, this );
-		thumb.on('pointerupoutside', this.endDrag, this );
+			thumb.x = (this.width - thumb.width) / 2;
 
-		this.addChild( thumb );
+		}
+
+		thumb.on('pointerdown', this.startDrag, this);
+		thumb.on('pointerup', this.endDrag, this);
+		thumb.on('pointerupoutside', this.endDrag, this);
+
+		this.addChild(thumb);
 
 		thumb.interactive = true;
 
@@ -386,14 +374,14 @@ export default class Scrollbar extends Pane {
 	 * 
 	 * @param {*} evt 
 	 */
-	startDrag(evt) {
+	startDrag(evt: InteractionEvent) {
 
 		this._dragging = true;
-		evt.data.getLocalPosition( this, this._dragPt );
+		evt.data.getLocalPosition(this, this._dragPt);
 
 		this._dragOffset = this._dragPt[this._axisProp] - this._thumb[this._axisProp];
 
-		this.thumb.on( 'pointermove', this.onDrag, this );
+		this.thumb.on('pointermove', this.onDrag, this);
 
 	}
 
@@ -401,11 +389,11 @@ export default class Scrollbar extends Pane {
 	 * 
 	 * @param {*} evt 
 	 */
-	onDrag(evt) {
+	onDrag(evt: InteractionEvent) {
 
-		if ( this._dragging !== true ) return;
+		if (this._dragging !== true) return;
 
-		evt.data.getLocalPosition( this, this._dragPt );
+		evt.data.getLocalPosition(this, this._dragPt);
 
 		this._thumb[this._axisProp] = this._dragPt[this._axisProp] - this._dragOffset;;
 
@@ -417,9 +405,9 @@ export default class Scrollbar extends Pane {
 	 * 
 	 * @param {*} evt 
 	 */
-	endDrag(evt) {
+	endDrag(evt: InteractionEvent) {
 
-		this.thumb.on( 'pointermove', this.onDrag, this );
+		this.thumb.on('pointermove', this.onDrag, this);
 		this._dragging = false;
 	}
 
@@ -427,28 +415,20 @@ export default class Scrollbar extends Pane {
 	 * Current scroll prop value of target.
 	 */
 	getTargetValue() {
-		return ( this._target && this._scrollProp ) ? this._target[this._scrollProp] : 0;
+		return (this._target && this._scrollProp) ? this._target[this._scrollProp] : 0;
 	}
-	setTargetValue(v) {
-		if ( this._target && this._scrollProp ) this._target[this._scrollProp] = v;
+	setTargetValue(v: number) {
+		if (this._target && this._scrollProp) this._target[this._scrollProp] = v;
 	}
 
 	setThumbSize() {
 
-		if ( this.target && this.target[this._sizeProp] ) {
+		if (this.target && this.target[this._sizeProp]) {
 
-			this.thumbSize =  this._axisLength*( this._pageSize / this.target[this._sizeProp] );
+			this.thumbSize = this._axisLength * (this._pageSize / this.target[this._sizeProp]);
 
 		} else this.thumbSize = this._axisLength;
 
 	}
-
-	/*getTargetMax() {
-		return ( this._target && this._maxProp ) ? this._target[this._maxProp] : 0;
-	}
-
-	setTargetMax(v) {
-		if ( this._target && this._maxProp ) this._target[this._maxProp] = v;
-	}*/
 
 }
