@@ -25,7 +25,7 @@ export function MakeSkin(opts?: Partial<UiSkin> & { foreColor?: number, backColo
 
 	skin.cross = addCross(skin, 'cross', 24, 12, foreColor);
 	skin.box = addRoundRect(skin, 'box', 32, backColor, foreColor);
-	skin.checkmark = addCheck(skin, 'check', 32, 12, foreColor)
+	skin.checkmark = addCheck(skin, 'checkmark', 32, 12, foreColor)
 	addFrame(skin, 64, 1, backColor, foreColor);
 	addBar(skin, 128, 32, foreColor);
 
@@ -68,7 +68,7 @@ function addFrame(skin: UiSkin, size: number = 64, thickness: number = 1, backCo
 
 }
 
-function addCheck(skin: UiSkin, key: string, size: number = 32, thickness: number = 8, color: number = 0) {
+function addCheck(skin: UiSkin, key: string, size: number = 32, thickness: number = 8, color: number = 0): Texture {
 
 	let g = new Graphics();
 	g.lineStyle(thickness, color);
@@ -84,7 +84,7 @@ function addCheck(skin: UiSkin, key: string, size: number = 32, thickness: numbe
 
 }
 
-function addCross(skin: UiSkin, key: string, size: number = 32, thickness: number = 8, color: number = 0) {
+function addCross(skin: UiSkin, key: string, size: number = 32, thickness: number = 8, color: number = 0): Texture {
 
 	let g = new Graphics();
 	g.lineStyle(thickness, color);

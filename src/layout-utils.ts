@@ -1,4 +1,44 @@
-import { DisplayObject, Point, Sprite } from 'pixi.js';
+import { DisplayObject, Point, Sprite, Container, NineSlicePlane, MaskData } from 'pixi.js';
+
+export const getMaskWidth = (mask: Container | MaskData | null): number => {
+
+	if (mask == null) {
+		return 0;
+	} else if (mask instanceof Container) {
+		return mask.width;
+	} else {
+		return mask.maskObject.getBounds().width;
+	}
+
+}
+export const getMaskHeight = (mask: Container | MaskData | null): number => {
+
+	if (mask == null) {
+		return 0;
+	} else if (mask instanceof Container) {
+		return mask.height;
+	} else {
+		return mask.maskObject.getBounds().height;
+	}
+
+}
+
+
+export function getWidth(clip: DisplayObject) {
+
+	if (clip instanceof Container) {
+		return clip.width;
+	}
+	return clip.getBounds().width;
+
+}
+
+export function getHeight(clip: DisplayObject) {
+	if (clip instanceof Container) {
+		return clip.height;
+	}
+	return clip.getBounds().height;
+}
 
 /**
  * Center's a clip within its parent container.

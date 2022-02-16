@@ -103,11 +103,21 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	/**
 	 * {Texture}
 	 */
-	get checkMark() { return this._checkmark; }
-	set checkMark(v) {
+	get checkmark() { return this._checkmark; }
+	set checkmark(v) {
 		this._checkmark = v;
-		this.emit('skin-changed', 'checkMark');
+		this.emit('skin-changed', 'checkmark');
 	}
+
+	/**
+	 * x-mark
+	 */
+	get cross() { return this._cross; }
+	set cross(v) {
+		this._cross = v;
+		this.emit('skin-changed', 'cross');
+	}
+
 
 	/**
 	 * {Texture}
@@ -120,6 +130,7 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 
 	_box?: Texture;
 	_checkmark?: Texture;
+	_cross?: Texture;
 
 	_largeStyle: PIXI.TextStyle;
 	_smallStyle: PIXI.TextStyle;

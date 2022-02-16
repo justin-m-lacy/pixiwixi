@@ -217,23 +217,31 @@ export default class ScrollPane extends Pane {
 
 	}
 
-	removeContentAt(index) {
+	removeContentAt(index: number) {
 		let clip = this._content.removeChildAt(index);
 		this.emit('contentchanged', this);
-		this._scrollbar.refresh();
+		this.scrollbar?.refresh();
 		return clip;
 	}
 
 	destroy() {
 
-		this.content.mask.destroy(
-			true
-		);
-		this.content.destroy({
-			children: true,
-			texture: false,
-			baseTexture: false
-		});
+		if (this.content?.mask instanceof Container) {
+			this.content.mask?.destroy({ children: true, texture: true, baseTexture: true });
+		}
+		if (this.content != null) {
+
+			if (this.content instanceof Container) {
+				this.content.destroy({
+					children: true,
+					texture: false,
+					baseTexture: false
+				});
+			} else {
+				this.content.destroy();
+			}
+
+		}
 
 		if (this._vertical) this._vertical.destroy({
 			children: true,

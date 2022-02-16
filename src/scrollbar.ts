@@ -1,13 +1,24 @@
-import { Container, Sprite, Point, Application, DisplayObject, NineSlicePlane, InteractionEvent } from 'pixi.js';
+import { Point, Application, DisplayObject, NineSlicePlane, InteractionEvent, Container } from 'pixi.js';
 import * as PIXI from 'pixi.js';
 import Pane from "./panes/pane";
 import UiSkin from "./ui-skin";
+import { PaneOptions } from './panes/pane';
+import { getMaskWidth, getMaskHeight } from './layout-utils';
 
 export enum ScrollAxis {
 	VERTICAL = 1,
 	HORIZONTAL
 };
 
+export type ScrollbarOpts = PaneOptions & {
+	target?: DisplayObject,
+	autoSizethumb?: boolean,
+	axis?: ScrollAxis,
+	axisLength?: number,
+	pageSize?: number,
+	height?: number,
+	width?: number
+};
 export default class Scrollbar extends Pane {
 
 	/**
@@ -15,27 +26,13 @@ export default class Scrollbar extends Pane {
 	 * vertical or horizontal.
 	 */
 	get axis() { return this._axis; }
-	set axis(v) {
-
-		this._axis = v;
-		if (v === ScrollAxis.HORIZONTAL) {
-
-			this._axisProp = 'x';
-			this._sizeProp = 'width';
-			this._scrollProp = 'x';
-
-		} else {
-
-			this._axisProp = 'y';
-			this._sizeProp = 'height';
-			this._scrollProp = 'y';
-
-		}
+	set axis(v: ScrollAxis) {
+		this._updateAxis(v);
 
 	}
 
 	/**
-	 * {number} - Size of the viewable region represented by the thumb.
+	 * {number} - Size of the viewable region.
 	 */
 	get pageSize() { return this._pageSize; }
 	set pageSize(v) {
@@ -53,15 +50,19 @@ export default class Scrollbar extends Pane {
 
 	/**
 	 * {number} sets the size of the thumb in the scrolling direction.
-	 * If no value is specified, the thumb
-	 * will change size based on the ratio of pageSize to totalSize.
+	 * If no value is specified, the thumb will change size based
+	 * on the ratio of pageSize to totalSize.
 	 */
 	get thumbSize() { return this._thumbSize; }
 	set thumbSize(v) {
 
 		this._thumbSize = v;
-		if (this._axis === ScrollAxis.HORIZONTAL) this._thumb.width = v;
-		else this._thumb.height = v;
+		if (this._axis === ScrollAxis.HORIZONTAL) {
+			this._thumb.width = v;
+		}
+		else {
+			this._thumb.height = v;
+		}
 
 	}
 
@@ -119,9 +120,9 @@ export default class Scrollbar extends Pane {
 			if (v.mask) {
 
 				if (this._axis === ScrollAxis.HORIZONTAL) {
-					this._pageSize = v.mask.width;
+					this._pageSize = getMaskWidth(v.mask);
 				} else {
-					this._pageSize = v.mask.height;
+					this._pageSize = getMaskHeight(v.mask);
 				}
 
 			}
@@ -146,17 +147,27 @@ export default class Scrollbar extends Pane {
 	get sizeProp() { return this._sizeProp; }
 	set sizeProp(v) { this._sizeProp = v; }
 
-	_sizeProp: 'width' | 'height';
-	_scrollProp: 'x' | 'y';
-	_axisProp: 'x' | 'y';
-	_target?: DisplayObject;
+	_sizeProp: 'width' | 'height' = 'width';
+	_scrollProp: 'x' | 'y' = 'x';
+	_axisProp: 'x' | 'y' = 'x';
+
+	/**
+	 * Container being scrolled.
+	 */
+	_target?: Container;
+
 	_autoSizeThumb: boolean = true;
 	_autoHide: boolean = false;
-	_thumbSize: number;
+	_thumbSize: number = 32;
 	_pageSize: number;
+
+	/**
+	 * Length of the scrollbar's axis.
+	 */
 	_axisLength: number;
+
 	_axis: ScrollAxis;
-	_thumb: DisplayObject | NineSlicePlane;
+	_thumb: Container;
 
 	_dragOffset: number = 0;
 	_dragPt: Point = new Point();
@@ -169,30 +180,35 @@ export default class Scrollbar extends Pane {
 	 * @param {UISkin} opts.skin
 	 */
 	constructor(app: Application,
-		opts?: { skin?: UiSkin, target?: DisplayObject, autoSizethumb?: boolean, axis?: ScrollAxis, axisLength?: number, pageSize?: number, height?: number, width?: number }) {
+		opts?: ScrollbarOpts) {
 
 		super(app, opts);
 
 		if (this._autoSizeThumb !== false) this._autoSizeThumb = true;
 
 		this._axis = opts?.axis ?? ScrollAxis.VERTICAL;
+		this._updateAxis(this._axis);
 
 		if (this._axis === ScrollAxis.HORIZONTAL) {
 
-			if (this._target && this._target.mask) this.width = this._target.mask.width;
-			this.height = opts.height || this.skin.scrollbarWidth || 18;
+			if (this._target && this._target.mask) {
+				this.width = getMaskWidth(this._target.mask);
+			}
 			this._axisLength = this.width;
+			this.height = opts?.height ?? opts?.skin?.scrollbarWidth ?? 18;
 
 		} else {
 
-			if (this._target && this._target.mask) this.height = this._target.mask.height;
-			this.width = opts.width || this.skin.scrollbarWidth || 18;
+			if (this._target && this._target.mask) {
+				this.height = getMaskHeight(this._target.mask);
+			}
 			this._axisLength = this.height;
+			this.width = opts?.width ?? opts?.skin?.scrollbarWidth ?? 18;
 
 		}
-		this._pageSize = opts?.pageSize ?? this._axisLength || 240;
+		this._pageSize = opts?.pageSize ?? this._axisLength ?? 240;
 
-		this.makeThumb();
+		this._thumb = this._makeThumb();
 		this.refresh();
 
 		//console.log('axisprop: ' + this._axisProp);
@@ -211,7 +227,25 @@ export default class Scrollbar extends Pane {
 
 	}
 
-	_setScrollAxis() {
+	/**
+	 * Update scroll axis
+	 */
+	_updateAxis(axis: ScrollAxis) {
+
+		if (axis === ScrollAxis.HORIZONTAL) {
+
+			this._axisProp = 'x';
+			this._sizeProp = 'width';
+			this._scrollProp = 'x';
+
+		} else {
+
+			this._axisProp = 'y';
+			this._sizeProp = 'height';
+			this._scrollProp = 'y';
+
+		}
+
 	}
 
 	/**
@@ -235,28 +269,29 @@ export default class Scrollbar extends Pane {
 			console.log('Hiding scrollbar: ' + (this._target ? 'target hidden' : 'no target'));
 			this._visible = false;
 			return;
+		} else {
+
+			// size of scrollable area.
+			var scrollSize = this._target[this._sizeProp];
+
+			if (scrollSize === undefined || scrollSize === null) {
+				this.visible = false;
+				return;
+			}
+			if (this._autoHide && scrollSize <= this._pageSize) {
+				this.visible = false;
+				return;
+			}
+
+			var curScroll = this._target[this._scrollProp];
+
+			this.visible = true;
+			if (curScroll > 0) this._target[this._scrollProp] = 0;
+			else if (curScroll + scrollSize < this._pageSize) this._target[this._scrollProp] = this._pageSize - scrollSize;
+
+			this.positionThumb();
+
 		}
-
-		// size of scrollable area.
-		var scrollSize = this._target[this._sizeProp];
-
-		if (scrollSize === undefined || scrollSize === null) {
-			this.visible = false;
-			return;
-		}
-		if (this._autoHide && scrollSize <= this._pageSize) {
-			console.log('autohiding scroll bar ');
-			this.visible = false;
-			return;
-		}
-
-		var curScroll = this._target[this._scrollProp];
-
-		this.visible = true;
-		if (curScroll > 0) this._target[this._scrollProp] = 0;
-		else if (curScroll + scrollSize < this._pageSize) this._target[this._scrollProp] = this._pageSize - scrollSize;
-
-		this.positionThumb();
 
 
 	}
@@ -274,7 +309,7 @@ export default class Scrollbar extends Pane {
 		if (thumbVal < 0) this.thumb[this._axisProp] = thumbVal = 0;
 		else if (thumbVal > (this._pageSize - thumbSize)) this.thumb[this._axisProp] = thumbVal = this._pageSize - thumbSize;
 
-		if (!this.target || this._pageSize === thumbSize) return;
+		if (!this._target || this._pageSize === thumbSize) return;
 
 		this._target.y = (thumbVal / (this._pageSize - thumbSize)) * (this._pageSize - this._target.height);
 
@@ -285,11 +320,13 @@ export default class Scrollbar extends Pane {
 	 */
 	pageUp() {
 
-		let scroll = this._target[this._scrollProp] + this._pageSize;
+		if (this._target) {
 
-		this._target[this._scrollProp] = scroll < 0 ? 0 : scroll;
+			let scroll = this._target[this._scrollProp] + this._pageSize;
+			this._target[this._scrollProp] = scroll < 0 ? 0 : scroll;
 
-		this.positionThumb();
+			this.positionThumb();
+		}
 
 	}
 
@@ -298,12 +335,14 @@ export default class Scrollbar extends Pane {
 	 */
 	pageDown() {
 
-		let scroll = this._target[this._scrollProp] - this._pageSize;
-		if (scroll < (-this._target[this._sizeProp] + this._pageSize)) scroll = -this._target[this._sizeProp] + this._pageSize;
+		if (this._target) {
+			let scroll = this._target[this._scrollProp] - this._pageSize;
+			if (scroll < (-this._target[this._sizeProp] + this._pageSize)) scroll = -this._target[this._sizeProp] + this._pageSize;
 
-		this._target[this._scrollProp] = scroll;
+			this._target[this._scrollProp] = scroll;
 
-		this.positionThumb();
+			this.positionThumb();
+		}
 
 	}
 
@@ -311,15 +350,15 @@ export default class Scrollbar extends Pane {
 	 * Set thumb position to correct location based on target position.
 	 */
 	positionThumb() {
-		this.thumb[this._axisProp] =
-			this._target[this._scrollProp] * (this._pageSize - this.thumbSize) / (this._pageSize - this._target[this._sizeProp])
+		if (this._target != null) {
+			this.thumb[this._axisProp] =
+				this._target[this._scrollProp] * (this._pageSize - this.thumbSize) / (this._pageSize - this._target[this._sizeProp])
+		} else {
+			this.thumb[this._axisProp] = 0;
+		}
 	}
 
-	/**
-	 * Bar area not on thumb was clicked.
-	 * @param {InteractionEvent} evt 
-	 */
-	barClick(evt) {
+	barClick(evt: InteractionEvent) {
 
 		evt.data.getLocalPosition(this, this._dragPt);
 
@@ -338,22 +377,22 @@ export default class Scrollbar extends Pane {
 	/**
 	 * Create the scrollbar thumb.
 	 */
-	makeThumb() {
+	_makeThumb() {
 
 		console.assert(this.skin != null, 'scrollbar.js: this.skin: ' + this.skin);
 		console.assert(this.skin!.box != null, 'scrollbar.js: this.skin.box: ' + this.skin!.box);
 
-		const thumb = this._thumb = this.skin!.makePane() ?? new DisplayObject;
+		const thumb = this.skin!.makePane() ?? new Container();
 		thumb.name = "thumb";
 
 		if (this._axis === ScrollAxis.HORIZONTAL) {
 
-			thumb.height = this.height;
+			thumb.height = this._thumbSize;
 			thumb.y = (this.height - thumb.height) / 2;
 
 		} else {
 
-			thumb.width = this.width;
+			thumb.width = this._thumbSize;
 			thumb.x = (this.width - thumb.width) / 2;
 
 		}
