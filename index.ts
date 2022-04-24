@@ -1,11 +1,8 @@
 import * as PIXI from 'pixi.js';
-import { CanvasGraphicsRenderer } from '@pixi/canvas-graphics';
-import { CanvasRenderer } from '@pixi/canvas-renderer';
-
 
 import Scrollbar from './src/scrollbar';
 import Pane from './src/panes/pane';
-import Window from './src/panes/window';
+import PixiWindow from './src/panes/window';
 import MultiPane from './src/panes/multi-pane';
 import ScrollPane from './src/panes/scroll-pane';
 
@@ -16,10 +13,10 @@ import ProgressBar from './src/controls/progress-bar';
 
 import UiSkin from './src/ui-skin';
 
-import Layout from './src/layout';
+import Layout from './src/layout/layout';
 import { DisplayObject } from 'pixi.js';
 
-export { Button, Scrollbar, Pane, Checkbox, Window, ScrollPane, UiSkin, ProgressBar, CounterFld, MultiPane };
+export { Button, Scrollbar, Pane, Checkbox, PixiWindow as Window, ScrollPane, UiSkin, ProgressBar, CounterFld, MultiPane };
 
 export enum FlowDirection {
 	HORIZONTAL,
@@ -43,8 +40,6 @@ type PixiWixi = {
 	disableWheel(app: PIXI.Application): void
 
 }
-
-CanvasRenderer.registerPlugin('graphics', CanvasGraphicsRenderer);
 
 export const Default: PixiWixi = {
 

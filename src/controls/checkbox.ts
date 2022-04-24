@@ -75,15 +75,14 @@ export default class Checkbox extends Container {
 		this.check.visible = this._checked = checked;
 
 		this._label = label;
-		this.labelClip = UiSkin.Default ? UiSkin.Default.makeSmallText(label) : new Text(label);
+		this.labelClip = UiSkin.Default ? UiSkin.Default.makeTextSmall(label) : new Text(label);
 
 		this.addChild(this.box);
 		this.addChild(this.check);
 		this.addChild(this.labelClip);
 
 		this.centerCheck(this.box, this.check);
-		this.labelClip.position = new Point(
-
+		this.labelClip.position.set(
 			this.box.x + this.box.width + 4,
 			this.box.y + (this.box.height - this.labelClip.height) / 2
 

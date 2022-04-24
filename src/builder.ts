@@ -23,9 +23,19 @@ export function MakeSkin(opts?: Partial<UiSkin> & { foreColor?: number, backColo
 	let foreColor = opts?.foreColor ?? 0x444444;
 	let backColor = opts?.backColor ?? 0xfefefe;
 
-	skin.cross = addCross(skin, 'cross', 24, 12, foreColor);
-	skin.box = addRoundRect(skin, 'box', 32, backColor, foreColor);
-	skin.checkmark = addCheck(skin, 'checkmark', 32, 12, foreColor)
+	if (!skin.cross) {
+		skin.cross = addCross(skin, 'cross', 24, 12, foreColor);
+	}
+	if (!skin.box) {
+		skin.box = addRoundRect(skin, 'box', 32, backColor, foreColor);
+	}
+	if (!skin.checkmark) {
+		skin.checkmark = addCheck(skin, 'checkmark', 32, 12, foreColor);
+	}
+	if (!skin.caret) {
+		skin.caret = addCaret(skin, { height: 18, color: 0, thickness: 2 });
+	}
+
 	addFrame(skin, 64, 1, backColor, foreColor);
 	addBar(skin, 128, 32, foreColor);
 
@@ -36,7 +46,25 @@ export function MakeSkin(opts?: Partial<UiSkin> & { foreColor?: number, backColo
 
 }
 
-function addBar(skin: UiSkin, width: number = 128, height: number = 32, foreColor: number = 0) {
+const addCaret = (skin: UiSkin, data?: {
+	height?: number,
+	color?: number,
+	thickness?: number
+}) => {
+
+	const thick = data?.thickness ?? 2;
+	let g = new Graphics();
+	g.lineStyle(thick, data?.color ?? 0);
+	g.lineTo(-thick / 2, data?.height ?? 20);
+
+	let tex = skin.addAsTexture('caret', g);
+
+	g.destroy();
+
+	return tex;
+}
+
+const addBar = (skin: UiSkin, width: number = 128, height: number = 32, foreColor: number = 0) => {
 
 	let g = new Graphics();
 	g.beginFill(foreColor);
@@ -52,7 +80,7 @@ function addBar(skin: UiSkin, width: number = 128, height: number = 32, foreColo
 
 }
 
-function addFrame(skin: UiSkin, size: number = 64, thickness: number = 1, backColor: number = 0, foreColor: number = 0xffffff) {
+const addFrame = (skin: UiSkin, size: number = 64, thickness: number = 1, backColor: number = 0, foreColor: number = 0xffffff) => {
 
 	let g = new Graphics();
 	g.beginFill(backColor);
@@ -68,7 +96,7 @@ function addFrame(skin: UiSkin, size: number = 64, thickness: number = 1, backCo
 
 }
 
-function addCheck(skin: UiSkin, key: string, size: number = 32, thickness: number = 8, color: number = 0): Texture {
+const addCheck = (skin: UiSkin, key: string, size: number = 32, thickness: number = 8, color: number = 0): Texture => {
 
 	let g = new Graphics();
 	g.lineStyle(thickness, color);
@@ -84,7 +112,7 @@ function addCheck(skin: UiSkin, key: string, size: number = 32, thickness: numbe
 
 }
 
-function addCross(skin: UiSkin, key: string, size: number = 32, thickness: number = 8, color: number = 0): Texture {
+const addCross = (skin: UiSkin, key: string, size: number = 32, thickness: number = 8, color: number = 0): Texture => {
 
 	let g = new Graphics();
 	g.lineStyle(thickness, color);
@@ -100,7 +128,7 @@ function addCross(skin: UiSkin, key: string, size: number = 32, thickness: numbe
 
 }
 
-function addRoundRect(skin: UiSkin, key: string, size: number = 32, fillColor: number = 0xffffff, lineColor: number = 0): Texture {
+const addRoundRect = (skin: UiSkin, key: string, size: number = 32, fillColor: number = 0xffffff, lineColor: number = 0): Texture => {
 
 	let g = new Graphics();
 	g.beginFill(fillColor);

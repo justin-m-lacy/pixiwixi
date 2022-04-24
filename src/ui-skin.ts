@@ -3,7 +3,8 @@ import { Graphics, Text, Texture, InteractionEvent } from 'pixi.js';
 import * as PIXI from 'pixi.js';
 import ProgressBar from "./controls/progress-bar";
 import Checkbox from "./controls/checkbox";
-import { CanvasRenderer } from '@pixi/canvas-renderer';
+
+export const SkinChanged = 'skin-changed';
 
 /**
  * All the miscellaneous data and objects to define
@@ -22,6 +23,7 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	}
 
 	_scrollbarWidth: number = 32;
+
 	/**
 	 * {number} width of scrollbars.
 	 */
@@ -32,11 +34,11 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	/**
 	 * {Number|string}
 	 */
-	get fontColor() { return this._defaultStyle.fill; }
+	get fontColor() { return this._baseStyle.fill; }
 	set fontColor(v) {
 
-		this._defaultStyle.fill = v;
-		this.emit('skin-changed', 'fontColor');
+		this._baseStyle.fill = v;
+		this.emit(SkinChanged, 'fontColor');
 
 	}
 
@@ -48,37 +50,42 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 
 		this._fontFamily = v;
 
-		if (this._defaultStyle) this._defaultStyle.fontFamily = v;
+		if (this._baseStyle) this._baseStyle.fontFamily = v;
 		if (this._largeStyle) this._largeStyle.fontFamily = v;
 		if (this._smallStyle) this._smallStyle.fontFamily = v;
 
-		this.emit('skin-changed', 'fontFamily');
+		this.emit(SkinChanged, 'fontFamily');
+	}
+
+	get baseSize() { return this._baseStyle.fontSize; }
+	set baseSize(v) {
+
+		this._baseStyle.fontSize = v;
+		this.emit(SkinChanged, 'baseSize');
+
 	}
 
 	/**
 	 * {PIXI.TextStyle } Default text style.
 	 */
-	get defaultStyle() { return this._defaultStyle; }
-	set defaultStyle(v) {
-		this._defaultStyle = v;
-		this.emit('skin-changed', 'defaultStyle');
+	get baseStyle() { return this._baseStyle; }
+	set baseStyle(v) {
+		this._baseStyle = v;
+		this.emit(SkinChanged, 'baseStyle');
 	}
 
-	/**
-	 * {number}
-	 */
 	get largeSize() { return this._largeStyle.fontSize; }
 	set largeSize(v) {
 
 		this._largeStyle.fontSize = v;
-		this.emit('skin-changed', 'largeSize');
+		this.emit(SkinChanged, 'largeSize');
 
 	}
 
 	get largeStyle() { return this._largeStyle; }
 	set largeStyle(v) {
 		this._largeStyle = v;
-		this.emit('skin-changed', 'largeStyle');
+		this.emit(SkinChanged, 'largeStyle');
 	}
 
 	/**
@@ -89,7 +96,7 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 
 		this._smallStyle.fontSize = v;
 
-		this.emit('skin-changed', 'smallSize');
+		this.emit(SkinChanged, 'smallSize');
 
 	}
 
@@ -97,7 +104,7 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	set smallStyle(v) {
 
 		this._smallStyle = v;
-		this.emit('skin-changed', 'smallStyle');
+		this.emit(SkinChanged, 'smallStyle');
 	}
 
 	/**
@@ -106,7 +113,7 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	get checkmark() { return this._checkmark; }
 	set checkmark(v) {
 		this._checkmark = v;
-		this.emit('skin-changed', 'checkmark');
+		this.emit(SkinChanged, 'checkmark');
 	}
 
 	/**
@@ -115,7 +122,7 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	get cross() { return this._cross; }
 	set cross(v) {
 		this._cross = v;
-		this.emit('skin-changed', 'cross');
+		this.emit(SkinChanged, 'cross');
 	}
 
 
@@ -125,19 +132,39 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	get box() { return this._box; }
 	set box(v) {
 		this._box = v;
-		this.emit('skin-changed', 'box');
+		this.emit(SkinChanged, 'box');
 	}
 
-	_box?: Texture;
-	_checkmark?: Texture;
-	_cross?: Texture;
+	get caret() {
+		return this._caret;
+	}
+	set caret(v) {
+		this._caret = v;
+		this.emit(SkinChanged, 'caret');
+	}
 
-	_largeStyle: PIXI.TextStyle;
-	_smallStyle: PIXI.TextStyle;
-	_defaultStyle: PIXI.TextStyle;
+	/**
+	 * Box background texture.
+	 */
+	private _box?: Texture;
 
-	_skinData: Map<string, any>;
-	_fontFamily?: string | string[];
+	/**
+	 * Check mark for checkboxes.
+	 */
+	private _checkmark?: Texture;
+
+	/**
+	 * Simple X-mark
+	 */
+	private _cross?: Texture;
+	private _caret?: Texture;
+
+	private _largeStyle: PIXI.TextStyle;
+	private _smallStyle: PIXI.TextStyle;
+	private _baseStyle: PIXI.TextStyle;
+
+	private _skinData: Map<string, any>;
+	private _fontFamily?: string | string[];
 
 	/**
 	 *
@@ -147,13 +174,36 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 
 		super();
 
-		this._scrollbarWidth = 18;
+		this._scrollbarWidth = vars?.scrollbarWidth ?? 18;
 
-		if (vars) Object.assign(this, vars);
+		this._fontFamily = vars?.fontFamily;
 
-		this._largeStyle = vars?.largeStyle ?? new PIXI.TextStyle({ fontFamily: this._fontFamily });
-		this._smallStyle = vars?.smallStyle || new PIXI.TextStyle({ fontFamily: this._fontFamily });
-		this._defaultStyle = vars?.defaultStyle || new PIXI.TextStyle({ fontFamily: this._fontFamily });
+		this._largeStyle = vars?.largeStyle ??
+			new PIXI.TextStyle({ fontFamily: this._fontFamily });
+		this._smallStyle = vars?.smallStyle ??
+			new PIXI.TextStyle({ fontFamily: this._fontFamily });
+		this._baseStyle = vars?.baseStyle ??
+			new PIXI.TextStyle({ fontFamily: this._fontFamily });
+
+		if (vars) {
+
+			this._box = vars.box;
+			this._checkmark = vars.checkmark;
+			this._cross = vars.cross;
+			this._caret = vars.caret;
+
+			if (vars.smallSize) {
+				this.smallStyle.fontSize = vars.smallSize;
+			}
+			if (vars.largeSize) {
+				this.largeStyle.fontSize = vars.largeSize;
+			}
+			if (vars.baseSize) {
+				this.baseStyle.fontSize = vars.baseSize;
+			}
+
+		}
+
 
 		this._skinData = new Map();
 
@@ -165,7 +215,7 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	 * @param {Function} [onClick=null] - function to call on click.
 	 * @param {*} [context=null] - context of the event listener.
 	 */
-	makeIconButton(tex: Texture, onClick?: Function, context?: any) {
+	makeIconButton(tex: Texture, onClick?: PIXI.utils.EventEmitter.ListenerFn, context?: any) {
 
 		let clip = new PIXI.Sprite(tex);
 
@@ -193,7 +243,7 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 		let mesh = new PIXI.NineSlicePlane(this._box!);
 
 		console.assert(this._smallStyle != null, 'Small style null');
-		let text = this.makeSmallText(str);
+		let text = this.makeTextSmall(str);
 		text.x = 4;
 
 		mesh.width = text.width + 8;
@@ -215,8 +265,10 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	 * @param {string} str
 	 * @param {Boolean} [clone=false]
 	 */
-	makeLargeText(str: string, clone = false) {
-		if (clone === true) return new Text(str, this._largeStyle.clone());
+	makeTextLarge(str: string, clone = false) {
+		if (clone === true) {
+			return new Text(str, this._largeStyle.clone());
+		}
 		return new Text(str, this._largeStyle);
 	}
 
@@ -225,14 +277,18 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	 * @param {string} str
 	 * @param {Boolean} [clone=false]
 	 */
-	makeSmallText(str: string, clone = false) {
-		if (clone === true) return new Text(str, this._smallStyle.clone());
+	makeTextSmall(str: string, clone = false) {
+		if (clone === true) {
+			return new Text(str, this._smallStyle.clone());
+		}
 		return new Text(str, this._smallStyle);
 	}
 
 	makeText(str: string = '', clone = false) {
-		if (clone === true) return new Text(str, this._defaultStyle.clone());
-		return new Text(str, this._defaultStyle);
+		if (clone === true) {
+			return new Text(str, this._baseStyle.clone());
+		}
+		return new Text(str, this._baseStyle);
 	}
 
 	/**
@@ -241,7 +297,11 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	 * @param {Boolean} [checked=false]
 	 */
 	makeCheckbox(label: string, checked = false) {
-		return new Checkbox(this._skinData.get('box'), this._skinData.get('checkmark'), label, checked);
+		return new Checkbox(
+			this._skinData.get('box'),
+			this._skinData.get('checkmark'),
+			label,
+			checked);
 	}
 
 	makeProgressBar() {
@@ -296,8 +356,8 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 	}
 
 	/**
-	 * Generate a texture from the given Graphics and add it
-	 * to the skin under the given key.
+	 * Generate a texture from Graphics and add it
+	 * to the skin under key.
 	 * @param {string} key
 	 * @param {Graphics} g
 	 */
@@ -307,7 +367,7 @@ export default class UiSkin extends PIXI.utils.EventEmitter {
 		const size = g.getBounds();
 		const tex = PIXI.RenderTexture.create({ width: size.width, height: size.height });
 
-		renderer.render(g, tex);
+		renderer.render(g, { renderTexture: tex });
 
 		this._skinData.set(key, tex);
 		return tex;

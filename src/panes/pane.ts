@@ -1,5 +1,5 @@
-import Layout from '@/layout';
-import { Container, DisplayObject, Application, Sprite, NineSlicePlane, InteractionEvent } from 'pixi.js';
+import Layout from '@/layout/layout';
+import { Container, DisplayObject, Sprite, NineSlicePlane, InteractionEvent } from 'pixi.js';
 import UiSkin from '../ui-skin';
 
 export type PaneOptions = { skin?: UiSkin };
@@ -35,10 +35,9 @@ export default class Pane extends Container {
 	get layout() { return this._layout; }
 	set layout(v) {
 		this._layout = v;
-		if (v) v.arrange(this);
+		if (v) v.arrange();
 	}
 
-	readonly app: Application;
 	_layout?: Layout;
 	_padding: number = 12;
 	_visible: boolean = true;
@@ -54,11 +53,10 @@ export default class Pane extends Container {
 	 * @param {PIXI.Application} app
 	 * @param {Object} [opts=null]
 	 */
-	constructor(app: Application, opts?: PaneOptions) {
+	constructor(opts?: PaneOptions) {
 
 		super();
 
-		this.app = app;
 
 		// placing these variables here allows opts to override.
 		this.interactive = this.interactiveChildren = true;
@@ -95,7 +93,7 @@ export default class Pane extends Container {
 	 */
 	addContentY(clip: DisplayObject, padX: number = 0, padY: number = 0, parent?: Container) {
 
-		var lastY = padY;
+		let lastY = padY;
 
 		if (clip instanceof Sprite) {
 			lastY += clip.anchor.y * clip.height;
@@ -124,7 +122,7 @@ export default class Pane extends Container {
 	 * Arrange items in pane using the pane's layout object.
 	 */
 	arrange(): void {
-		if (this._layout) this._layout.arrange(this);
+		if (this._layout) this._layout.arrange();
 	}
 
 	/**

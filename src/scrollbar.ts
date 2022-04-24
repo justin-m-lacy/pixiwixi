@@ -171,18 +171,11 @@ export default class Scrollbar extends Pane {
 	_dragPt: Point = new Point();
 	_dragging: boolean = false;
 
-	/**
-	 * 
-	 * @param {PIXI.Application} app
-	 * @param {Object} [opts=null]
-	 * @param {UISkin} opts.skin
-	 */
 	constructor(
-		app: Application,
 		opts?: ScrollbarOpts
 	) {
 
-		super(app, opts);
+		super(opts);
 
 		if (this._autoSizeThumb !== false) this._autoSizeThumb = true;
 
@@ -268,7 +261,7 @@ export default class Scrollbar extends Pane {
 		} else {
 
 			// size of scrollable area.
-			var scrollSize = this._target[this._sizeProp];
+			const scrollSize = this._target[this._sizeProp];
 
 			if (scrollSize === undefined || scrollSize === null) {
 				this.visible = false;
@@ -279,7 +272,7 @@ export default class Scrollbar extends Pane {
 				return;
 			}
 
-			var curScroll = this._target[this._scrollProp];
+			const curScroll = this._target[this._scrollProp];
 
 			this.visible = true;
 			if (curScroll > 0) this._target[this._scrollProp] = 0;

@@ -2,8 +2,16 @@ import { Application } from "pixi.js";
 import ScrollPane from "./scroll-pane";
 import UiSkin from '../ui-skin';
 import { ScrollAxis } from '../scrollbar';
+import { PaneOptions } from './pane';
+import { ScrollPaneOpts } from './scroll-pane';
 
-export default class Window extends ScrollPane {
+export type WindowOptions =
+	ScrollPaneOpts &
+	{
+		canResize?: boolean,
+		canDrag?: boolean
+	};
+export default class PixiWindow extends ScrollPane {
 
 	canResize: boolean = false;
 	canDrag: boolean = false;
@@ -13,9 +21,9 @@ export default class Window extends ScrollPane {
 	 * @param {PIXI.Application} app 
 	 * @param {*} opts 
 	 */
-	constructor(app: Application, opts?: { skin?: UiSkin, axes: ScrollAxis }) {
+	constructor(opts?: WindowOptions) {
 
-		super(app, opts);
+		super(opts);
 
 	}
 

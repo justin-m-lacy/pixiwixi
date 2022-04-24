@@ -22,9 +22,9 @@ export default class MultiPane extends Pane {
 	 */
 	get views() { return this._views; }
 
-	constructor(app: Application, opts?: PaneOptions & { viewIndex?: number }) {
+	constructor(opts?: PaneOptions & { viewIndex?: number }) {
 
-		super(app, opts);
+		super(opts);
 
 		this._views = [];
 		this._vIndex = opts?.viewIndex ?? -1;
