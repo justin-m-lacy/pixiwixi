@@ -32,7 +32,12 @@ export default class CounterField extends Text {
 
 
 	/// Currently displayed text.
-	text: string;
+	get text() {
+		return super.text;
+	}
+	set text(s: string) {
+		super.text = s;
+	}
 
 	/**
 	 *
