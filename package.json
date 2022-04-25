@@ -2,7 +2,7 @@
   "name": "pixiwixi",
   "version": "0.7.2",
   "description": "Basic Ui elements for pixi.js",
-  "main": "lib/index.ts",
+  "main": "lib/index.js",
   "scripts": {
     "build": "tsc",
     "prepare": "tsc"
