@@ -1,10 +1,9 @@
 import { Text, TextStyle, Ticker } from 'pixi.js';
 
-const MIN_COUNT_DIST = 2;
 /**
  * Field for displaying a message and numeric value.
  */
-export default class CounterField extends Text {
+export class CounterField extends Text {
 
 	/**
 	 * {number}
@@ -24,11 +23,24 @@ export default class CounterField extends Text {
 		this.text = this.curTex();
 	}
 
-	_label: string = '';
-	_value: number = 0;
-	_targetVal: number = 0;
-	_showCount: boolean = false;
-	_animating: boolean = false;
+	/**
+	 * Counting distance at which count will snap
+	 * directly to the final value without animating.
+	 */
+	get snapDistance() { return this._snapDistance }
+	set snapDistance(v) { this._snapDistance = v }
+
+	/**
+	 * Minimum difference in value that will trigger an animation
+	 * rather than an automatic setting of the target value.
+	 */
+	private _snapDistance: number = 2;
+
+	private _label: string = '';
+	private _value: number = 0;
+	private _targetVal: number = 0;
+	private _showCount: boolean = false;
+	private _animating: boolean = false;
 
 
 	/// Currently displayed text.
@@ -75,7 +87,7 @@ export default class CounterField extends Text {
 
 			// already animating.
 			if (this._animating === true) return;
-			else if (Math.abs(value - this._value) > MIN_COUNT_DIST) {
+			else if (Math.abs(value - this._value) > this._snapDistance) {
 
 				this.startAnimation();
 				this.animate();
@@ -92,7 +104,7 @@ export default class CounterField extends Text {
 
 	animate() {
 
-		if (Math.abs(this._targetVal - this._value) <= MIN_COUNT_DIST) {
+		if (Math.abs(this._targetVal - this._value) <= this._snapDistance) {
 
 			this._value = this._targetVal;
 			this.endAnimation();

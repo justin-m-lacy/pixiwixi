@@ -1,6 +1,6 @@
 import { DisplayObject, Point, Sprite, Container, NineSlicePlane, MaskData } from 'pixi.js';
 
-export const getMaskWidth = (mask: Container | MaskData | null): number => {
+export const getMaskWidth = (mask?: Container | MaskData | null): number => {
 
 	if (mask == null) {
 		return 0;
@@ -11,7 +11,7 @@ export const getMaskWidth = (mask: Container | MaskData | null): number => {
 	}
 
 }
-export const getMaskHeight = (mask: Container | MaskData | null): number => {
+export const getMaskHeight = (mask?: Container | MaskData | null): number => {
 
 	if (mask == null) {
 		return 0;
@@ -24,12 +24,8 @@ export const getMaskHeight = (mask: Container | MaskData | null): number => {
 }
 
 
-export function getWidth(clip: DisplayObject) {
-
-	if (clip instanceof Container) {
-		return clip.width;
-	}
-	return clip.getBounds().width;
+export const getWidth = (clip: DisplayObject) => {
+	return (clip instanceof Container) ? clip.width : clip.getBounds().width;
 
 }
 

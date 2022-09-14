@@ -1,8 +1,8 @@
 import { Graphics, Text, Texture, InteractionEvent } from 'pixi.js';
 
 import * as PIXI from 'pixi.js';
-import ProgressBar from "./controls/progress-bar";
-import Checkbox from "./controls/checkbox";
+import { ProgressBar } from "./controls/progress-bar";
+import { Checkbox } from "./controls/checkbox";
 
 export const SkinChanged = 'skin-changed';
 
@@ -10,7 +10,7 @@ export const SkinChanged = 'skin-changed';
  * All the miscellaneous data and objects to define
  * the general look of the UI.
  */
-export default class UiSkin extends PIXI.utils.EventEmitter {
+export class UiSkin extends PIXI.utils.EventEmitter {
 
 	static Default?: UiSkin;
 

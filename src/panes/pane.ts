@@ -1,10 +1,10 @@
 import Layout from '@/layout/layout';
 import { Container, DisplayObject, Sprite, NineSlicePlane, InteractionEvent } from 'pixi.js';
-import UiSkin from '../ui-skin';
+import { UiSkin } from '../ui-skin';
 
 export type PaneOptions = { skin?: UiSkin };
 
-export default class Pane extends Container {
+export class Pane extends Container {
 
 	get tween() { return this._tween; }
 	set tween(v) { this._tween = v; }

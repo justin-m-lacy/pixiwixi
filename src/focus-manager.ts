@@ -15,7 +15,7 @@ export class FocusManager {
 
     currentFocus: Focusable | null = null;
 
-    _active: boolean = false;
+    private _active: boolean = false;
 
     constructor(app: Application) {
 

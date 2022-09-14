@@ -1,34 +1,32 @@
 import * as PIXI from 'pixi.js';
 
-import Scrollbar from './src/scrollbar';
-import Pane from './src/panes/pane';
-import PixiWindow from './src/panes/window';
-import MultiPane from './src/panes/multi-pane';
-import ScrollPane from './src/panes/scroll-pane';
+import { Scrollbar } from './src/scrollbar';
+import { Pane } from './src/panes/pane';
+import { PixiWindow } from './src/panes/window';
+import { TabbedPane } from './src/panes/tabbed-pane';
+import { ScrollPane } from './src/panes/scroll-pane';
 
-import CounterFld from './src/controls/counter-field';
-import Button from './src/controls/button';
-import Checkbox from './src/controls/checkbox';
-import ProgressBar from './src/controls/progress-bar';
+import { CounterField } from './src/controls/counter-field';
+import { Button } from './src/controls/button';
+import { Checkbox } from './src/controls/checkbox';
+import { ProgressBar } from './src/controls/progress-bar';
 
-import UiSkin from './src/ui-skin';
-
-import Layout from './src/layout/layout';
+import { UiSkin } from './src/ui-skin';
 import { DisplayObject } from 'pixi.js';
 
-export { Button, Scrollbar, Pane, Checkbox, PixiWindow as Window, ScrollPane, UiSkin, ProgressBar, CounterFld, MultiPane };
+export { Button, Scrollbar, Pane, Checkbox, PixiWindow as Window, ScrollPane, UiSkin, ProgressBar, CounterField, TabbedPane as MultiPane };
 
 export enum FlowDirection {
-	HORIZONTAL,
-	VERTICAL
+	Horizontal,
+	Vertical
 }
 export enum Anchors {
 
-	TOP,
-	BOTTOM,
-	LEFT,
-	RIGHT,
-	CENTER,
+	Top,
+	Bottom,
+	Left,
+	Right,
+	Center,
 
 };
 

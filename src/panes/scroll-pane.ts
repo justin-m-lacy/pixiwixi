@@ -1,8 +1,8 @@
-import Pane from './pane.js';
+import { Pane } from './pane.js';
 import { Container, Graphics, DisplayObject } from 'pixi.js';
 import { ScrollAxis } from '../scrollbar';
-import Scrollbar from '../scrollbar';
-import UiSkin from '../ui-skin';
+import { Scrollbar } from '../scrollbar';
+import { UiSkin } from '../ui-skin';
 import { PaneOptions } from './pane';
 
 export type ScrollPaneOpts = PaneOptions & { axes: ScrollAxis };
@@ -10,7 +10,7 @@ export type ScrollPaneOpts = PaneOptions & { axes: ScrollAxis };
  * Pane with a scrollbar and scrollable content area.
  * Scrollable content should be added to the content clip.
  */
-export default class ScrollPane extends Pane {
+export class ScrollPane extends Pane {
 
 
 	get content(): DisplayObject { return this._content; }
@@ -71,12 +71,10 @@ export default class ScrollPane extends Pane {
 
 	}
 
-	_content: Container;
-	_axes: ScrollAxis;
-	_vertical?: Scrollbar;
-	_horizontal?: Scrollbar;
-	_width: number = 200;
-	_height: number = 200;
+	private _content: Container;
+	private _axes: ScrollAxis;
+	private _vertical?: Scrollbar;
+	private _horizontal?: Scrollbar;
 
 
 	/**

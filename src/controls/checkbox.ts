@@ -1,8 +1,8 @@
-import { Container, Sprite, Text, Point, Rectangle, Texture, InteractionEvent } from 'pixi.js';
+import { Container, Sprite, Text, Rectangle, Texture, InteractionEvent } from 'pixi.js';
 import UiSkin from "../ui-skin";
 import { centerOn } from '../layout-utils';
 
-export default class Checkbox extends Container {
+export class Checkbox extends Container {
 
 	_checked: boolean;
 
@@ -44,16 +44,15 @@ export default class Checkbox extends Container {
 	get label() { return this._label; }
 	set label(v) { this._label = v; }
 
-	_tween?: any;
-
-	_label: string;
-
 	/// Checkbox sprite
 	box: Sprite;
 	/// Checkmark sprite.
 	check: Sprite;
 
 	labelClip: Text;
+
+	private _tween?: any;
+	private _label: string;
 
 	/**
 	 * 

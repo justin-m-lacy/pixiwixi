@@ -3,13 +3,13 @@
  */
 import * as PIXI from 'pixi.js';
 import { Graphics, Texture } from 'pixi.js';
-import UiSkin from './ui-skin';
+import { UiSkin } from './ui-skin';
 
 /**
  * 
  * @param {Object} [opts=null] 
  */
-export function MakeSkin(opts?: Partial<UiSkin> & { foreColor?: number, backColor?: number }) {
+export const MakeSkin = (opts?: Partial<UiSkin> & { foreColor?: number, backColor?: number }) => {
 
 	let skin = new UiSkin(opts);
 

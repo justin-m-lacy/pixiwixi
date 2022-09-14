@@ -1,7 +1,7 @@
 import { Container } from 'pixi.js';
 import * as PIXI from 'pixi.js';
 
-export default class ProgressBar extends Container {
+export class ProgressBar extends Container {
 
 	get loader(): PIXI.Loader | undefined { return this._loader; }
 

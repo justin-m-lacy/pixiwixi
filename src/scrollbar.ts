@@ -1,7 +1,6 @@
-import { Point, Application, DisplayObject, NineSlicePlane, InteractionEvent, Container } from 'pixi.js';
-import * as PIXI from 'pixi.js';
-import Pane from "./panes/pane";
-import UiSkin from "./ui-skin";
+import { Point, DisplayObject, NineSlicePlane, InteractionEvent, Container } from 'pixi.js';
+import { Pane } from "./panes/pane";
+import { UiSkin } from "./ui-skin";
 import { PaneOptions } from './panes/pane';
 import { getMaskWidth, getMaskHeight } from './layout-utils';
 
@@ -19,7 +18,7 @@ export type ScrollbarOpts = PaneOptions & {
 	height?: number,
 	width?: number
 };
-export default class Scrollbar extends Pane {
+export class Scrollbar extends Pane {
 
 	/**
 	 * {number} [direction=ScrollAxis.VERTICAL] - The direction of the scrollbar,

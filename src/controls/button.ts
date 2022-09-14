@@ -1,30 +1,29 @@
 import { DisplayObject, InteractionEvent } from "pixi.js";
 
-export default class Button {
+export class Button {
 
-	get onClick(): Function | undefined { return this._onClick; }
-	set onClick(v: Function | undefined) { this._onClick = v; }
+	get onClick() { return this._onClick; }
+	set onClick(v) { this._onClick = v; }
 
 	readonly clip: DisplayObject;
-	_onClick?: Function;
+	_onClick?: () => void;
 
 
 	/**
 	 * 
 	 * @param {DisplayObject} clip 
 	 */
-	constructor(clip: DisplayObject, onClick?: Function) {
+	constructor(clip: DisplayObject, onClick?: () => void) {
 
 		this._onClick = onClick;
 		this.clip = clip;
-		this.clip.on('pointerup', this._clickFunc);
+		this.clip.interactive = true;
+		this.clip.on('pointerup', this._clickFunc, this);
 
 	}
 
-	_clickFunc(e: InteractionEvent): void {
-		if (this._onClick) {
-			this._onClick();
-		}
+	private _clickFunc(e: InteractionEvent): void {
+		this._onClick?.();
 	}
 
 	destroy() {

@@ -1,4 +1,4 @@
-import { DisplayObject, Container, Rectangle } from 'pixi.js';
+import { DisplayObject, Rectangle } from 'pixi.js';
 
 export const isLayout = (item: any): item is ILayout => {
 	return (item as ILayout).arrange !== undefined;

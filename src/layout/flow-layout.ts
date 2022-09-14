@@ -1,14 +1,14 @@
 import { FlowDirection } from '../../index';
-import { Container, DisplayObject, Rectangle } from 'pixi.js';
+import { DisplayObject, Rectangle } from 'pixi.js';
 import Layout from './layout';
 import { isLayout, ILayout } from './layout';
 
 export default class FlowLayout extends Layout {
 
-	flow: FlowDirection = FlowDirection.HORIZONTAL;
+	flow: FlowDirection = FlowDirection.Horizontal;
 	padding: number = 0;
 
-	constructor(flow: FlowDirection = FlowDirection.HORIZONTAL, padding: number = 4) {
+	constructor(flow: FlowDirection = FlowDirection.Horizontal, padding: number = 4) {
 
 		super();
 
@@ -17,7 +17,7 @@ export default class FlowLayout extends Layout {
 
 	}
 
-	arrange(rect?: Rectangle) {
+	public arrange(rect?: Rectangle) {
 
 		const padding = this.padding;
 		const children = this.children;
@@ -27,7 +27,7 @@ export default class FlowLayout extends Layout {
 		let sizeProp: 'width' | 'height';
 		let prop: 'x' | 'y';
 
-		if (this.flow === FlowDirection.HORIZONTAL) {
+		if (this.flow === FlowDirection.Horizontal) {
 			prop = 'x';
 			sizeProp = 'width';
 		} else {

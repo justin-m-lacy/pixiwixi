@@ -1,11 +1,11 @@
-import Pane from './pane';
-import { Application, DisplayObject } from 'pixi.js';
+import { Pane } from './pane';
+import { DisplayObject } from 'pixi.js';
 import { PaneOptions } from './pane';
 
 /**
  * Tracks multiple subviews which can be displayed in turn.
  */
-export default class MultiPane extends Pane {
+export class TabbedPane extends Pane {
 
 	get curView() { return this._curView; }
 	set curView(v: DisplayObject | undefined) {
@@ -14,8 +14,8 @@ export default class MultiPane extends Pane {
 	}
 
 	readonly _views: DisplayObject[];
-	_curView?: DisplayObject;
-	_vIndex: number = -1;
+	private _curView?: DisplayObject;
+	private _vIndex: number = -1;
 
 	/**
 	 * @property {DisplayObject[]} views - subviews.
