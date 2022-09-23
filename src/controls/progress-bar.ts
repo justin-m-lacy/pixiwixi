@@ -1,4 +1,4 @@
-import { Container } from 'pixi.js';
+import { Container, Ticker } from 'pixi.js';
 import * as PIXI from 'pixi.js';
 
 export class ProgressBar extends Container {
@@ -20,16 +20,25 @@ export class ProgressBar extends Container {
 	 */
 	get isComplete(): boolean { return this._complete; }
 
-	_loader?: PIXI.Loader;
-	_loading: boolean = false;
-	_complete: boolean = false;
+	private _loader?: PIXI.Loader;
+	private _loading: boolean = false;
+	private _complete: boolean = false;
+
+	/**
+	 * Ticker used to advanced progress bar.
+	 * Defaults to PIXI.Ticker.shared.
+	 */
+	private _ticker: Ticker;
+
 	protected back: Container;
 	protected bar: Container;
 
 
-	constructor(back: Container, bar: Container) {
+	constructor(back: Container, bar: Container, ticker?: Ticker) {
 
 		super();
+
+		this._ticker = ticker ?? Ticker.shared;
 
 		this.back = back;
 		this.bar = bar;
