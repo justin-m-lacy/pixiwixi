@@ -2,7 +2,6 @@ import { Pane } from './pane.js';
 import { Container, Graphics, DisplayObject } from 'pixi.js';
 import { ScrollAxis } from '../scrollbar';
 import { Scrollbar } from '../scrollbar';
-import { UiSkin } from '../ui-skin';
 import { PaneOptions } from './pane';
 
 export type ScrollPaneOpts = PaneOptions & { axes: ScrollAxis };

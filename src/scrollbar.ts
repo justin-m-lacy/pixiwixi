@@ -1,8 +1,7 @@
-import { Point, DisplayObject, NineSlicePlane, InteractionEvent, Container } from 'pixi.js';
+import { Point, DisplayObject, InteractionEvent, Container } from 'pixi.js';
 import { Pane } from "./panes/pane";
-import { UiSkin } from "./ui-skin";
 import { PaneOptions } from './panes/pane';
-import { getMaskWidth, getMaskHeight } from './layout-utils';
+import { getMaskWidth, getMaskHeight } from './utils/layout-utils';
 
 export enum ScrollAxis {
 	VERTICAL = 1,

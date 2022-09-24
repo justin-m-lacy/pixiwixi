@@ -1,6 +1,6 @@
 import { Container, Sprite, Text, Rectangle, Texture, InteractionEvent } from 'pixi.js';
-import UiSkin from "../ui-skin";
-import { centerOn } from '../layout-utils';
+import { UiSkin } from "../ui-skin";
+import { centerOn } from '../utils/layout-utils';
 
 export class Checkbox extends Container {
 

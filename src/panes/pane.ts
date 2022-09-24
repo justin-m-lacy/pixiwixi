@@ -1,13 +1,27 @@
-import Layout from '@/layout/layout';
+import { Layout } from '@/layout/layout';
 import { Container, DisplayObject, Sprite, NineSlicePlane, InteractionEvent } from 'pixi.js';
 import { UiSkin } from '../ui-skin';
+import { Tween } from '@tweenjs/tween.js';
+import { makeShowTween, makeHidetween } from '../utils/tween-utils';
 
-export type PaneOptions = { skin?: UiSkin };
+export type PaneOptions = {
+
+	skin?: UiSkin,
+
+	/**
+	 * Whether to automatically create tweens that play when tween is hidden or shown.
+	 * Default is false.
+	 */
+	makeTweens?: boolean
+};
 
 export class Pane extends Container {
 
-	get tween() { return this._tween; }
-	set tween(v) { this._tween = v; }
+	get showTween() { return this._showTween; }
+	set showTween(v) { this._showTween = v; }
+
+	get hideTween() { return this._hideTween; }
+	set hideTween(v) { this._hideTween = v; }
 
 	/**
 	 * {number}
@@ -27,7 +41,7 @@ export class Pane extends Container {
 	}
 
 	/**
-	 * {DisplayObject}
+	 * Pane background that fills the pane behind all other elements.
 	 */
 	get bg(): Container | NineSlicePlane | undefined { return this._bg; }
 	set bg(v: Container | NineSlicePlane | undefined) { this._bg = v; }
@@ -44,9 +58,9 @@ export class Pane extends Container {
 	_width: number = 0;
 	_height: number = 0;
 	_bg?: Container | NineSlicePlane;
-	_showing: boolean = false;
 	skin?: UiSkin;
-	_tween?: any;
+	_showTween?: Tween<Pane>;
+	_hideTween?: Tween<Pane>
 
 	/**
 	 *
@@ -57,14 +71,17 @@ export class Pane extends Container {
 
 		super();
 
-
 		// placing these variables here allows opts to override.
 		this.interactive = this.interactiveChildren = true;
 
 		if (opts) {
 
-			Object.assign(this, opts);
 			this.skin = opts.skin;
+
+			if (opts.makeTweens) {
+				this.showTween = makeShowTween(this);
+				this.hideTween = makeHidetween(this);
+			}
 
 		}
 
@@ -79,8 +96,6 @@ export class Pane extends Container {
 		}
 
 		this.on('pointerdown', (e: InteractionEvent) => e.stopPropagation());
-
-		this._showing = false;
 
 	}
 
@@ -130,16 +145,23 @@ export class Pane extends Container {
 	 */
 	toggle(): void {
 
-		if (this._tween) {
+		if (this.visible && !this.hideTween?.isPlaying()) {
 
-			if (this._showing === true) {
-				this._tween.reverse();
+			this._showTween?.stop();
+			if (this.hideTween) {
+				this.hideTween.start();
 			} else {
-				this._tween.play();
+				this.visible = true;
 			}
-			this._showing = !this._showing;
+		} else {
 
-		} else this.visible = !this.visible;
+			this.hideTween?.stop();
+			if (this.showTween) {
+				this.showTween.start();
+			} else {
+				this.visible = false;
+			}
+		}
 
 	}
 
@@ -181,14 +203,11 @@ export class Pane extends Container {
 	}
 
 	show(): void {
-		this._showing = true;
 		this.interactive = true;
 		this.visible = true;
-
 	}
 
 	hide(): void {
-		this._showing = false;
 		this.interactive = false;
 		this.visible = false;
 	}

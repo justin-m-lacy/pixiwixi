@@ -10,7 +10,7 @@
   "dependencies": {
     "@pixi/math": "6.3.0",
     "@tweenjs/tween.js": "^18",
-    "pixi.js": "^6.2.2"
+    "pixi.js": "^6.5.4"
   },
   "keywords": [
     "pixi.js",
@@ -24,6 +24,6 @@
   "license": "MIT",
   "devDependencies": {
     "eslint": "^8.14.0",
-    "typescript": "^4.5.5"
+    "typescript": "^4.8.3"
   }
 }

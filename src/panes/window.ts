@@ -1,8 +1,4 @@
-import { Application } from "pixi.js";
 import { ScrollPane } from "./scroll-pane";
-import { UiSkin } from '../ui-skin';
-import { ScrollAxis } from '../scrollbar';
-import { PaneOptions } from './pane';
 import { ScrollPaneOpts } from './scroll-pane';
 
 export type WindowOptions =

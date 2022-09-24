@@ -27,6 +27,9 @@
       ]
     }
   },
+  "typeAcquisition": {
+    "enable": true
+  },
   "include": [
     "./*.ts",
     "src/**/*.ts",

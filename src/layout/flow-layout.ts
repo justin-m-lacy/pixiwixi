@@ -1,9 +1,13 @@
-import { FlowDirection } from '../../index';
 import { DisplayObject, Rectangle } from 'pixi.js';
-import Layout from './layout';
+import { Layout } from './layout';
 import { isLayout, ILayout } from './layout';
 
-export default class FlowLayout extends Layout {
+export enum FlowDirection {
+	Horizontal,
+	Vertical
+}
+
+export class FlowLayout extends Layout {
 
 	flow: FlowDirection = FlowDirection.Horizontal;
 	padding: number = 0;

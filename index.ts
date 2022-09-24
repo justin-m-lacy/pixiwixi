@@ -14,21 +14,12 @@ import { ProgressBar } from './src/controls/progress-bar';
 import { UiSkin } from './src/ui-skin';
 import { DisplayObject } from 'pixi.js';
 
+export * as TweenUtils from 'src/utils/tween-utils';
+
+export { Anchors } from './src/layout/layout';
+export { FlowLayout, FlowDirection } from './src/layout/flow-layout';
+
 export { Button, Scrollbar, Pane, Checkbox, PixiWindow as Window, ScrollPane, UiSkin, ProgressBar, CounterField, TabbedPane as MultiPane };
-
-export enum FlowDirection {
-	Horizontal,
-	Vertical
-}
-export enum Anchors {
-
-	Top,
-	Bottom,
-	Left,
-	Right,
-	Center,
-
-};
 
 type PixiWixi = {
 	_wheelFunc?: (ev: WheelEvent) => void,

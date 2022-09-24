@@ -1,5 +1,16 @@
 import { DisplayObject, Rectangle } from 'pixi.js';
 
+export enum Anchors {
+
+	Top,
+	Bottom,
+	Left,
+	Right,
+	Center,
+
+};
+
+
 export const isLayout = (item: any): item is ILayout => {
 	return (item as ILayout).arrange !== undefined;
 }
@@ -20,7 +31,7 @@ export abstract class SingleChildLayout implements ILayout {
 
 }
 
-export default abstract class Layout implements ILayout {
+export abstract class Layout implements ILayout {
 
 
 	readonly children: Array<DisplayObject | ILayout>;
