@@ -182,10 +182,16 @@ export class Pane extends Container {
 
 	}
 
+	/**
+	 * Center a clip's width within this pane.
+	 */
 	centerX(clip: DisplayObject) {
 		clip.x = 0.5 * (this._width - clip.getBounds().width);
 	}
 
+	/**
+	 * Center a clip's height within this pane.
+	 */
 	centerY(clip: DisplayObject) {
 		clip.y = 0.5 * (this._height - clip.getBounds().height);
 	}

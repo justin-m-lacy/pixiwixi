@@ -1,5 +1,58 @@
-import { DisplayObject, Point, Sprite, Container, NineSlicePlane, MaskData } from 'pixi.js';
+import { DisplayObject, Point, Sprite, Container, MaskData } from 'pixi.js';
 
+
+/**
+ * Place each clip horizontally after its predecessor, accounting for the width of each,
+ * plus additional padding.
+ * @param padding 
+ * @param clips 
+ */
+export const orderX = (padding: number, ...clips: Container[]) => {
+
+	if (clips.length <= 0) {
+		return;
+	}
+	let prev = clips[0];
+
+	for (let i = 1; i < clips.length; i++) {
+
+		let cur = clips[i];
+		cur.x = prev.x + prev.width + padding;
+		prev = cur;
+
+	}
+
+}
+
+/**
+ * Place each display vertically after its predecessor, accounting for the height of each,
+ * plus additional padding.
+ * @param padding 
+ * @param clips 
+ */
+export const orderY = (padding: number, ...clips: Container[]) => {
+
+	if (clips.length <= 0) {
+		return;
+	}
+	let prev = clips[0];
+
+	for (let i = 1; i < clips.length; i++) {
+
+		let cur = clips[i];
+		cur.y = prev.x + prev.height + padding;
+		prev = cur;
+
+	}
+
+}
+
+
+/**
+ * Get the height of a display objects mask, or 0 if no mask.
+ * @param mask 
+ * @returns 
+ */
 export const getMaskWidth = (mask?: Container | MaskData | null): number => {
 
 	if (mask == null) {
@@ -11,6 +64,12 @@ export const getMaskWidth = (mask?: Container | MaskData | null): number => {
 	}
 
 }
+
+/**
+ * Get the height of a display objects mask, or 0 if no mask.
+ * @param mask 
+ * @returns 
+ */
 export const getMaskHeight = (mask?: Container | MaskData | null): number => {
 
 	if (mask == null) {
@@ -54,16 +113,17 @@ export function center(clip: DisplayObject): void {
 }
 
 /**
- * Center a clip on a target clip.
+ * Center a sprite on a target sprite.
+ * If clip has a parent, the target's coordinates are transformed
+ * to the clip's parents coordinate system.
  * @param {DisplayObject} clip - clip to center.
  * @param {DisplayObject} target - target to center on.
  */
 export function centerOn(clip: Sprite, target: Sprite) {
 
 	let p = clip.parent;
-	if (!p) return;
 
-	if (clip.parent == target.parent) {
+	if (!p || p === target.parent) {
 		clip.x = target.x + 0.5 * (target.width - clip.width);
 		clip.y = target.y + 0.5 * (target.height - clip.height);
 		return;
