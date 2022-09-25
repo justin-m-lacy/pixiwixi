@@ -11,13 +11,13 @@ import { ProgressBar } from './src/controls/progress-bar';
 
 import { UiSkin } from './src/ui-skin';
 
-export * as TweenUtils from 'src/utils/tween-utils';
-export * as LayoutUtils from 'src/utils/layout-utils';
+import * as TweenUtils from 'src/utils/tween-utils';
+import * as LayoutUtils from 'src/utils/layout-utils';
 
 export { Anchors } from './src/layout/layout';
 export { FlowLayout, FlowDirection } from './src/layout/flow-layout';
 
 export { enablewheel, WheelControl } from './src/utils/mouse-wheel';
 
-export { Button, Scrollbar, Pane, Checkbox, PixiWindow as Window, ScrollPane, UiSkin, ProgressBar, CounterField, TabbedPane as MultiPane };
+export { Button, Scrollbar, Pane, Checkbox, PixiWindow as Window, ScrollPane, UiSkin, ProgressBar, TweenUtils, LayoutUtils, CounterField, TabbedPane as MultiPane };
 
