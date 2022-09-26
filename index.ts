@@ -11,8 +11,8 @@ import { ProgressBar } from './src/controls/progress-bar';
 
 import { UiSkin } from './src/ui-skin';
 
-import * as TweenUtils from 'src/utils/tween-utils';
-import * as LayoutUtils from 'src/utils/layout-utils';
+import * as TweenUtils from './src/utils/tween-utils';
+import * as LayoutUtils from './src/utils/layout-utils';
 
 export { Anchors } from './src/layout/layout';
 export { FlowLayout, FlowDirection } from './src/layout/flow-layout';
