@@ -1,4 +1,4 @@
-import { DisplayObject, Point, Sprite, Container, MaskData } from 'pixi.js';
+import { DisplayObject, Point, Container, MaskData } from 'pixi.js';
 
 
 /**
