@@ -113,13 +113,13 @@ export function center(clip: DisplayObject): void {
 }
 
 /**
- * Center a sprite on a target sprite.
+ * Center a clip on a target clip.
  * If clip has a parent, the target's coordinates are transformed
  * to the clip's parents coordinate system.
  * @param {DisplayObject} clip - clip to center.
  * @param {DisplayObject} target - target to center on.
  */
-export function centerOn(clip: Sprite, target: Sprite) {
+export function centerOn(clip: Container, target: Container) {
 
 	let p = clip.parent;
 
