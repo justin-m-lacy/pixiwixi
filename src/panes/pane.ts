@@ -79,6 +79,9 @@ export class Pane extends Container {
 
 		this.skin = opts?.skin ?? DefaultSkin;
 
+		this.width = opts?.width ?? 100;
+		this.height = opts?.height ?? 100;
+
 		if (opts?.bg) {
 			this._bg = opts.bg;
 		} else if (this.skin) {
@@ -91,9 +94,6 @@ export class Pane extends Container {
 		}
 
 		if (opts) {
-
-			this.width = opts?.width ?? 100;
-			this.height = opts?.height ?? 100;
 
 			if (opts.makeTweens) {
 				this.showTween = makeShowTween(this);
