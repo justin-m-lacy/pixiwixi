@@ -1,4 +1,4 @@
-import { Graphics, Text, Texture, InteractionEvent } from 'pixi.js';
+import { Graphics, Text, Texture, InteractionEvent, Application } from 'pixi.js';
 
 import * as PIXI from 'pixi.js';
 import { ProgressBar } from "./controls/progress-bar";
@@ -158,7 +158,7 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 	private _smallStyle: PIXI.TextStyle;
 	private _baseStyle: PIXI.TextStyle;
 
-	private _skinData: Map<string, any>;
+	private readonly _skinData: Map<string, any> = new Map();
 	private _fontFamily?: string | string[];
 
 	/**
@@ -198,9 +198,6 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 			}
 
 		}
-
-
-		this._skinData = new Map();
 
 	}
 
@@ -363,7 +360,7 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 		const size = g.getBounds();
 		const tex = PIXI.RenderTexture.create({ width: size.width, height: size.height });
 
-		renderer.render(g, { renderTexture: tex });
+		renderer.render(g, { renderTexture: tex, clear: false });
 
 		this._skinData.set(key, tex);
 		return tex;
