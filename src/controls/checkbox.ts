@@ -1,5 +1,5 @@
 import { Container, Sprite, Text, Rectangle, Texture, InteractionEvent } from 'pixi.js';
-import { DefaultSkin } from "../ui-skin";
+import { DefaultSkin } from "../defaults";
 import { centerOn } from '../utils/layout-utils';
 
 export class Checkbox extends Container {

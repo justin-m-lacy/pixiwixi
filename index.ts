@@ -9,7 +9,8 @@ import { Button } from './src/controls/button';
 import { Checkbox } from './src/controls/checkbox';
 import { ProgressBar } from './src/controls/progress-bar';
 
-import { UiSkin, DefaultSkin } from './src/ui-skin';
+import { UiSkin } from './src/ui-skin';
+import { DefaultSkin } from './src/defaults';
 
 import * as TweenUtils from './src/utils/tween-utils';
 import * as LayoutUtils from './src/utils/layout-utils';

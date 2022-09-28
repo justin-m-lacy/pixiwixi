@@ -1,8 +1,9 @@
 import { Layout } from '@/layout/layout';
 import { Container, DisplayObject, Sprite, NineSlicePlane, InteractionEvent } from 'pixi.js';
-import { UiSkin, DefaultSkin } from '../ui-skin';
+import { UiSkin } from '../ui-skin';
 import { Tween } from '@tweenjs/tween.js';
 import { makeShowTween, makeHidetween } from '../utils/tween-utils';
+import { DefaultSkin } from '@/defaults';
 
 export type PaneOptions = {
 
@@ -108,7 +109,6 @@ export class Pane extends Container {
 		if (clip instanceof Sprite) {
 			lastY += clip.anchor.y * clip.height;
 		}
-
 		if (!parent) parent = this;
 
 		if (parent.children.length > 0) {

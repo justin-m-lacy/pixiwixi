@@ -392,7 +392,3 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 	}
 
 }
-
-
-
-export const DefaultSkin = new UiSkin();
