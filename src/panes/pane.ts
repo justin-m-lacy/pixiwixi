@@ -37,12 +37,12 @@ export class Pane extends Container {
 
 
 	setWidth(v: number): void {
-		this.width = v;
+		this.m_width = v;
 		if (this._bg) this._bg.width = v;
 	}
 
 	setHeight(v: number): void {
-		this.height = v;
+		this.m_height = v;
 		if (this._bg) this._bg.height = v;
 	}
 
@@ -66,6 +66,13 @@ export class Pane extends Container {
 	private _hideTween?: Tween<Pane>
 
 	/**
+	 * Private width/height is used to disentage background sizing from
+	 * parent scaling.
+	 */
+	private m_width: number;
+	private m_height: number;
+
+	/**
 	 *
 	 * @param {PIXI.Application} app
 	 * @param {Object} [opts=null]
@@ -79,17 +86,17 @@ export class Pane extends Container {
 
 		this.skin = opts?.skin ?? DefaultSkin;
 
-		this.width = opts?.width ?? 100;
-		this.height = opts?.height ?? 100;
+		this.m_width = opts?.width ?? 100;
+		this.m_height = opts?.height ?? 100;
 
 		if (opts?.bg) {
 			this._bg = opts.bg;
 		} else if (this.skin) {
-			this._bg = this.skin.makeFrame(this.width, this.height);
+			this._bg = this.skin.makeFrame(this.m_width, this.m_height);
 		}
 		if (this._bg) {
-			this._bg.width = this.width;
-			this._bg.height = this.height;
+			this._bg.width = this.m_width;
+			this._bg.height = this.m_height;
 			this.addChild(this._bg);
 		}
 
@@ -181,10 +188,10 @@ export class Pane extends Container {
 		const bounds = clip.getBounds();
 
 		if (clip.x < this._padding) clip.x = this._padding;
-		else if (clip.x + bounds.width > this.width) clip.x = this.width - bounds.width - this._padding;
+		else if (clip.x + bounds.width > this.m_width) clip.x = this.m_width - bounds.width - this._padding;
 
 		if (clip.y < this._padding) clip.y = this._padding;
-		else if (clip.y + bounds.height > this.height) clip.y = this.height - bounds.height - this._padding;
+		else if (clip.y + bounds.height > this.m_height) clip.y = this.m_height - bounds.height - this._padding;
 
 	}
 
@@ -192,14 +199,14 @@ export class Pane extends Container {
 	 * Center a clip's width within this pane.
 	 */
 	centerX(clip: DisplayObject) {
-		clip.x = 0.5 * (this.width - clip.getBounds().width);
+		clip.x = 0.5 * (this.m_width - clip.getBounds().width);
 	}
 
 	/**
 	 * Center a clip's height within this pane.
 	 */
 	centerY(clip: DisplayObject) {
-		clip.y = 0.5 * (this.height - clip.getBounds().height);
+		clip.y = 0.5 * (this.m_height - clip.getBounds().height);
 	}
 
 	/**
@@ -209,8 +216,8 @@ export class Pane extends Container {
 	center(clip: DisplayObject, pctX: number = 0.5, pctY: number = 0.5) {
 
 		const bnds = clip.getBounds();
-		clip.x = pctX * (this.width - bnds.width);
-		clip.y = pctY * (this.height - bnds.height);
+		clip.x = pctX * (this.m_width - bnds.width);
+		clip.y = pctY * (this.m_height - bnds.height);
 
 	}
 
