@@ -179,7 +179,8 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 	private readonly _textures: Map<SkinKey, UiData> = new Map();
 	private _fontFamily?: string | string[];
 
-	public set renderer(v: PIXI.Renderer) { this._renderer = v }
+	public get renderer() { return this._renderer }
+	public set renderer(v) { this._renderer = v }
 	private _renderer?: PIXI.Renderer;
 
 	/**
@@ -202,6 +203,8 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 			new PIXI.TextStyle({ fontFamily: this._fontFamily });
 
 		if (vars) {
+
+			this.renderer = vars.renderer;
 
 			if (vars.box) {
 				this._textures.set(SkinKey.box, vars.box);

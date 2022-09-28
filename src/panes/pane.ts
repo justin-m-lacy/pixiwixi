@@ -78,17 +78,6 @@ export class Pane extends Container {
 		this.interactive = this.interactiveChildren = true;
 
 		this.skin = opts?.skin ?? DefaultSkin;
-		if (opts) {
-
-			this.width = opts?.width ?? 100;
-			this.height = opts?.height ?? 100;
-
-			if (opts.makeTweens) {
-				this.showTween = makeShowTween(this);
-				this.hideTween = makeHidetween(this);
-			}
-
-		}
 
 		if (opts?.bg) {
 			this._bg = opts.bg;
@@ -99,6 +88,18 @@ export class Pane extends Container {
 			this._bg.width = this.width;
 			this._bg.height = this.height;
 			this.addChild(this._bg);
+		}
+
+		if (opts) {
+
+			this.width = opts?.width ?? 100;
+			this.height = opts?.height ?? 100;
+
+			if (opts.makeTweens) {
+				this.showTween = makeShowTween(this);
+				this.hideTween = makeHidetween(this);
+			}
+
 		}
 
 		this.on('pointerdown', (e: InteractionEvent) => e.stopPropagation());
