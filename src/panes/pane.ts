@@ -13,7 +13,10 @@ export type PaneOptions = {
 	 * Whether to automatically create tweens that play when tween is hidden or shown.
 	 * Default is false.
 	 */
-	makeTweens?: boolean
+	makeTweens?: boolean,
+
+	width?: number,
+	height?: number
 };
 
 export class Pane extends Container {
@@ -74,15 +77,16 @@ export class Pane extends Container {
 
 		this.skin = opts?.skin ?? DefaultSkin;
 		if (opts) {
+
+			this.width = opts?.width ?? 100;
+			this.height = opts?.height ?? 100;
+
 			if (opts.makeTweens) {
 				this.showTween = makeShowTween(this);
 				this.hideTween = makeHidetween(this);
 			}
 
 		}
-
-		if (!this.width) this.width = super.width;
-		if (!this.height) this.height = super.height;
 
 		if (this._bg != null && this.skin) {
 			this._bg = this.skin.makePane(this.width, this.height);
