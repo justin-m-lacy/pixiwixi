@@ -1,6 +1,6 @@
 import { Layout } from '@/layout/layout';
 import { Container, DisplayObject, Sprite, NineSlicePlane, InteractionEvent } from 'pixi.js';
-import { UiSkin } from '../ui-skin';
+import { UiSkin, DefaultSkin } from '../ui-skin';
 import { Tween } from '@tweenjs/tween.js';
 import { makeShowTween, makeHidetween } from '../utils/tween-utils';
 
@@ -52,15 +52,12 @@ export class Pane extends Container {
 		if (v) v.arrange();
 	}
 
-	_layout?: Layout;
-	_padding: number = 12;
-	_visible: boolean = true;
-	_width: number = 0;
-	_height: number = 0;
-	_bg?: Container | NineSlicePlane;
+	private _layout?: Layout;
+	private _padding: number = 12;
+	private _bg?: Container | NineSlicePlane;
 	skin?: UiSkin;
-	_showTween?: Tween<Pane>;
-	_hideTween?: Tween<Pane>
+	private _showTween?: Tween<Pane>;
+	private _hideTween?: Tween<Pane>
 
 	/**
 	 *
@@ -74,10 +71,8 @@ export class Pane extends Container {
 		// placing these variables here allows opts to override.
 		this.interactive = this.interactiveChildren = true;
 
+		this.skin = opts?.skin ?? DefaultSkin;
 		if (opts) {
-
-			this.skin = opts.skin;
-
 			if (opts.makeTweens) {
 				this.showTween = makeShowTween(this);
 				this.hideTween = makeHidetween(this);

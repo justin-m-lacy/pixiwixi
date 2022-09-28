@@ -4,31 +4,24 @@ import * as PIXI from 'pixi.js';
 import { ProgressBar } from "./controls/progress-bar";
 import { Checkbox } from "./controls/checkbox";
 
-export const SkinChanged = 'skin-changed';
+export const SkinChanged = 'skinChanged';
 
 /**
  * All the miscellaneous data and objects to define
  * the general look of the UI.
  */
-export class UiSkin extends PIXI.utils.EventEmitter {
-
-	static Default?: UiSkin;
-
-	static SetDefaultSkin(skin: UiSkin) {
-		UiSkin.Default = skin;
-	}
-
-	static GetDefaultSkin(): UiSkin | undefined {
-		return UiSkin.Default;
-	}
-
-	_scrollbarWidth: number = 32;
+export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 
 	/**
 	 * {number} width of scrollbars.
 	 */
 	get scrollbarWidth() { return this._scrollbarWidth; }
-	set scrollbarWidth(v) { this._scrollbarWidth = v; }
+	set scrollbarWidth(v) {
+		if (v !== this._scrollbarWidth) {
+			this._scrollbarWidth = v;
+			this.emit(SkinChanged, 'scrollbarWidth');
+		}
+	}
 
 
 	/**
@@ -158,6 +151,8 @@ export class UiSkin extends PIXI.utils.EventEmitter {
 	 */
 	private _cross?: Texture;
 	private _caret?: Texture;
+
+	private _scrollbarWidth: number = 32;
 
 	private _largeStyle: PIXI.TextStyle;
 	private _smallStyle: PIXI.TextStyle;
@@ -377,14 +372,14 @@ export class UiSkin extends PIXI.utils.EventEmitter {
 	/**
 	 * Set the skinning data for a given key. The data can be style information,
 	 * a texture, or any information relevant to ui display.
-	 * A 'skin-changed' event will be fired, notifying listeners of the change.
+	 * A skinChanged event will be fired, notifying listeners of the change.
 	 * @param {string} key
 	 * @param {*} obj
 	 */
 	setSkinData(key: string, obj: Object) {
 
 		this._skinData.set(key, obj);
-		this.emit('skin-changed', obj);
+		this.emit(SkinChanged, obj);
 
 	}
 
@@ -397,3 +392,7 @@ export class UiSkin extends PIXI.utils.EventEmitter {
 	}
 
 }
+
+
+
+export const DefaultSkin = new UiSkin();

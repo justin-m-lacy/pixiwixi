@@ -39,9 +39,6 @@ export const MakeSkin = (opts?: Partial<UiSkin> & { foreColor?: number, backColo
 	addFrame(skin, 64, 1, backColor, foreColor);
 	addBar(skin, 128, 32, foreColor);
 
-	UiSkin.SetDefaultSkin(skin);
-
-
 	return skin;
 
 }
