@@ -16,7 +16,9 @@ export type PaneOptions = {
 	makeTweens?: boolean,
 
 	width?: number,
-	height?: number
+	height?: number,
+
+	bg?: Container | NineSlicePlane
 };
 
 export class Pane extends Container {
@@ -88,11 +90,15 @@ export class Pane extends Container {
 
 		}
 
-		if (!this.bg && this.skin) {
+		if (opts?.bg) {
+			this._bg = opts.bg;
+		} else if (this.skin) {
 			this._bg = this.skin.makePane(this.width, this.height);
-			if (this._bg) {
-				this.addChild(this._bg);
-			}
+		}
+		if (this._bg) {
+			this._bg.width = this.width;
+			this._bg.height = this.height;
+			this.addChild(this._bg);
 		}
 
 		this.on('pointerdown', (e: InteractionEvent) => e.stopPropagation());

@@ -323,14 +323,15 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 	makePane(width = 200, height = 200) {
 
 		let data = this._skinData.get('frame');
-		if (!(data instanceof PIXI.Texture)) return undefined;
+		if (data instanceof PIXI.Texture) {
 
-		let pane = new PIXI.NineSlicePlane(data);
-		pane.width = width;
-		pane.height = height;
+			let pane = new PIXI.NineSlicePlane(data);
+			pane.width = width;
+			pane.height = height;
 
-		return pane;
+			return pane;
 
+		}
 	}
 
 	/**
