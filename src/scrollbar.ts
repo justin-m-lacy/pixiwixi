@@ -254,7 +254,7 @@ export class Scrollbar extends Pane {
 		if (this._autoSizeThumb === true) this.setThumbSize();
 		if (!this._target || this._target.visible === false) {
 			console.log('Hiding scrollbar: ' + (this._target ? 'target hidden' : 'no target'));
-			this._visible = false;
+			this.visible = false;
 			return;
 		} else {
 

@@ -1,5 +1,5 @@
 import { Container, Sprite, Text, Rectangle, Texture, InteractionEvent } from 'pixi.js';
-import { UiSkin } from "../ui-skin";
+import { DefaultSkin } from "../ui-skin";
 import { centerOn } from '../utils/layout-utils';
 
 export class Checkbox extends Container {
@@ -74,7 +74,7 @@ export class Checkbox extends Container {
 		this.check.visible = this._checked = checked;
 
 		this._label = label;
-		this.labelClip = UiSkin.Default ? UiSkin.Default.makeTextSmall(label) : new Text(label);
+		this.labelClip = DefaultSkin?.makeTextSmall(label) ?? new Text(label);
 
 		this.addChild(this.box);
 		this.addChild(this.check);
