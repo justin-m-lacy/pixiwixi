@@ -3,7 +3,7 @@ import { Container, DisplayObject, Sprite, NineSlicePlane, InteractionEvent } fr
 import { UiSkin } from '../ui-skin';
 import { Tween } from '@tweenjs/tween.js';
 import { makeShowTween, makeHidetween } from '../utils/tween-utils';
-import { DefaultSkin } from '@/defaults';
+import { DefaultSkin } from '../defaults';
 
 export type PaneOptions = {
 
