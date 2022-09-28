@@ -36,7 +36,7 @@ export class Pane extends Container {
 	}
 
 	setHeight(v: number): void {
-		this._height = v;
+		this.height = v;
 		if (this._bg) this._bg.height = v;
 	}
 
@@ -80,11 +80,11 @@ export class Pane extends Container {
 
 		}
 
-		if (!this._width) this._width = super.width;
-		if (!this._height) this._height = super.height;
+		if (!this.width) this.width = super.width;
+		if (!this.height) this.height = super.height;
 
 		if (this._bg != null && this.skin) {
-			this._bg = this.skin.makePane(this._width, this._height);
+			this._bg = this.skin.makePane(this.width, this.height);
 			if (this._bg) {
 				this.addChild(this._bg);
 			}
@@ -170,10 +170,10 @@ export class Pane extends Container {
 		const bounds = clip.getBounds();
 
 		if (clip.x < this._padding) clip.x = this._padding;
-		else if (clip.x + bounds.width > this._width) clip.x = this._width - bounds.width - this._padding;
+		else if (clip.x + bounds.width > this.width) clip.x = this.width - bounds.width - this._padding;
 
 		if (clip.y < this._padding) clip.y = this._padding;
-		else if (clip.y + bounds.height > this._height) clip.y = this._height - bounds.height - this._padding;
+		else if (clip.y + bounds.height > this.height) clip.y = this.height - bounds.height - this._padding;
 
 	}
 
@@ -181,14 +181,14 @@ export class Pane extends Container {
 	 * Center a clip's width within this pane.
 	 */
 	centerX(clip: DisplayObject) {
-		clip.x = 0.5 * (this._width - clip.getBounds().width);
+		clip.x = 0.5 * (this.width - clip.getBounds().width);
 	}
 
 	/**
 	 * Center a clip's height within this pane.
 	 */
 	centerY(clip: DisplayObject) {
-		clip.y = 0.5 * (this._height - clip.getBounds().height);
+		clip.y = 0.5 * (this.height - clip.getBounds().height);
 	}
 
 	/**
@@ -198,8 +198,8 @@ export class Pane extends Container {
 	center(clip: DisplayObject, pctX: number = 0.5, pctY: number = 0.5) {
 
 		const bnds = clip.getBounds();
-		clip.x = pctX * (this._width - bnds.width);
-		clip.y = pctY * (this._height - bnds.height);
+		clip.x = pctX * (this.width - bnds.width);
+		clip.y = pctY * (this.height - bnds.height);
 
 	}
 
