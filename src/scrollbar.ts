@@ -369,7 +369,7 @@ export class Scrollbar extends Pane {
 		console.assert(this.skin != null, 'scrollbar.js: this.skin: ' + this.skin);
 		console.assert(this.skin!.box != null, 'scrollbar.js: this.skin.box: ' + this.skin!.box);
 
-		const thumb = this.skin!.makePane() ?? new Container();
+		const thumb = this.skin!.makeFrame() ?? new Container();
 		thumb.name = "thumb";
 
 		if (this._axis === ScrollAxis.HORIZONTAL) {

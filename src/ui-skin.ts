@@ -1,4 +1,4 @@
-import { Graphics, Text, Texture, InteractionEvent, Application } from 'pixi.js';
+import { Text, Texture, InteractionEvent, DisplayObject, TextStyle, LineStyle, FillStyle, GraphicsData } from 'pixi.js';
 
 import * as PIXI from 'pixi.js';
 import { ProgressBar } from "./controls/progress-bar";
@@ -7,13 +7,30 @@ import { Checkbox } from "./controls/checkbox";
 export const SkinChanged = 'skinChanged';
 
 /**
+ * Keys to skinData. currently these are only used to store textures.
+ */
+export enum SkinKey {
+
+	frame = 'frame',
+	box = 'box',
+	checkmark = 'checkmark',
+	bar = 'bar',
+	cross = 'cross',
+	caret = 'caret'
+
+}
+
+
+export type UiData = DisplayObject | Texture | TextStyle | LineStyle | FillStyle | GraphicsData;
+
+/**
  * All the miscellaneous data and objects to define
  * the general look of the UI.
  */
 export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 
 	/**
-	 * {number} width of scrollbars.
+	 * width of scrollbars.
 	 */
 	get scrollbarWidth() { return this._scrollbarWidth; }
 	set scrollbarWidth(v) {
@@ -25,7 +42,7 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 
 
 	/**
-	 * {Number|string}
+	 * Base font color.
 	 */
 	get fontColor() { return this._baseStyle.fill; }
 	set fontColor(v) {
@@ -101,56 +118,57 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 	}
 
 	/**
-	 * {Texture}
+	 * Check symbol for checkboxes.
 	 */
-	get checkmark() { return this._checkmark; }
+	get checkmark() { return this._textures.get(SkinKey.checkmark); }
 	set checkmark(v) {
-		this._checkmark = v;
-		this.emit(SkinChanged, 'checkmark');
+		if (v) {
+			this._textures.set(SkinKey.checkmark, v);
+		} else {
+			this._textures.delete(SkinKey.checkmark);
+		}
+		this.emit(SkinChanged, SkinKey.checkmark);
 	}
 
 	/**
-	 * x-mark
+	 * A cross mark symbol.
 	 */
-	get cross() { return this._cross; }
+	get cross() { return this._textures.get(SkinKey.cross) }
 	set cross(v) {
-		this._cross = v;
-		this.emit(SkinChanged, 'cross');
+		if (v) {
+			this._textures.set(SkinKey.cross, v);
+		} else {
+			this._textures.delete(SkinKey.cross);
+		}
+		this.emit(SkinChanged, SkinKey.cross);
 	}
 
+
+	get box() { return this._textures.get(SkinKey.box); }
+	set box(v) {
+		if (v) {
+			this._textures.set(SkinKey.box, v);
+		} else {
+			this._textures.delete(SkinKey.box);
+		}
+		this.emit(SkinChanged, SkinKey.box);
+	}
 
 	/**
-	 * {Texture}
+	 * Caret for textboxes.
 	 */
-	get box() { return this._box; }
-	set box(v) {
-		this._box = v;
-		this.emit(SkinChanged, 'box');
-	}
-
 	get caret() {
-		return this._caret;
+		return this._textures.get(SkinKey.caret)
 	}
 	set caret(v) {
-		this._caret = v;
-		this.emit(SkinChanged, 'caret');
+		if (v) {
+			this._textures.set(SkinKey.caret, v);
+		} else {
+			this._textures.delete(SkinKey.caret);
+		}
+		this.emit(SkinChanged, SkinKey.caret);
 	}
 
-	/**
-	 * Box background texture.
-	 */
-	private _box?: Texture;
-
-	/**
-	 * Check mark for checkboxes.
-	 */
-	private _checkmark?: Texture;
-
-	/**
-	 * Simple X-mark
-	 */
-	private _cross?: Texture;
-	private _caret?: Texture;
 
 	private _scrollbarWidth: number = 32;
 
@@ -158,14 +176,16 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 	private _smallStyle: PIXI.TextStyle;
 	private _baseStyle: PIXI.TextStyle;
 
-	private readonly _skinData: Map<string, any> = new Map();
+	private readonly _textures: Map<SkinKey, UiData> = new Map();
 	private _fontFamily?: string | string[];
+
+	private renderer?: PIXI.Renderer;
 
 	/**
 	 *
 	 * @param {Object} [vars=null]
 	 */
-	constructor(vars?: Partial<UiSkin>) {
+	constructor(vars?: Partial<UiSkin> & { renderer?: PIXI.Renderer }) {
 
 		super();
 
@@ -182,10 +202,18 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 
 		if (vars) {
 
-			this._box = vars.box;
-			this._checkmark = vars.checkmark;
-			this._cross = vars.cross;
-			this._caret = vars.caret;
+			if (vars.box) {
+				this._textures.set(SkinKey.box, vars.box);
+			}
+			if (vars.checkmark) {
+				this._textures.set(SkinKey.checkmark, vars.checkmark);
+			}
+			if (vars.cross) {
+				this._textures.set(SkinKey.cross, vars.cross);
+			}
+			if (vars.caret) {
+				this._textures.set(SkinKey.caret, vars.caret);
+			}
 
 			if (vars.smallSize) {
 				this.smallStyle.fontSize = vars.smallSize;
@@ -231,10 +259,7 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 
 		let clip = new PIXI.Container();
 
-		console.assert(this._box != null, 'Skin box is null');
-		let mesh = new PIXI.NineSlicePlane(this._box!);
-
-		console.assert(this._smallStyle != null, 'Small style null');
+		let mesh = new PIXI.NineSlicePlane(this.box! as Texture);
 		let text = this.makeTextSmall(str);
 		text.x = 4;
 
@@ -290,22 +315,26 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 	 */
 	makeCheckbox(label: string, checked = false) {
 		return new Checkbox(
-			this._skinData.get('box'),
-			this._skinData.get('checkmark'),
+			this._textures.get(SkinKey.box)! as Texture,
+			this._textures.get(SkinKey.checkmark)! as Texture,
 			label,
 			checked);
 	}
 
 	makeProgressBar() {
 
-		let backTex = this._skinData.get('box');
-		let barTex = this._skinData.get('bar');
+		let backTex = this._textures.get(SkinKey.box)!;
+		let barTex = this._textures.get(SkinKey.bar)!;
 
-		console.assert(backTex != null && barTex != null, 'Missing Skin box or bar: ' + backTex + ' , ' + barTex);
+		if (!backTex) {
+			throw new Error(`Missing skin data: ${SkinKey.box}`)
+		} else if (!barTex) {
+			throw new Error(`Missing skin data: ${SkinKey.bar}`)
+		}
 
 		let p = new ProgressBar(
-			new PIXI.NineSlicePlane(backTex),
-			new PIXI.NineSlicePlane(barTex)
+			new PIXI.NineSlicePlane(backTex as Texture),
+			new PIXI.NineSlicePlane(barTex as Texture)
 		);
 
 		return p;
@@ -317,9 +346,9 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 	 * @param {number} [width=200]
 	 * @param {number} [height=200]
 	 */
-	makePane(width = 200, height = 200) {
+	makeFrame(width = 200, height = 200) {
 
-		let data = this._skinData.get('frame');
+		let data = this._textures.get(SkinKey.frame);
 		if (data instanceof PIXI.Texture) {
 
 			let pane = new PIXI.NineSlicePlane(data);
@@ -332,37 +361,19 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 	}
 
 	/**
-	 *
-	 * @param {string} key
-	 * @param {number} left
-	 * @param {number} top
-	 * @param {number} right
-	 * @param {number} bottom
-	 */
-	makeNineSlice(key: string, left: number = 12, top: number = 8, right: number = 12, bottom: number = 8) {
-
-		let data = this._skinData.get(key);
-		if (!(data instanceof PIXI.Texture)) return null;
-
-		return new PIXI.NineSlicePlane(data, left, top, right, bottom);
-
-	}
-
-	/**
-	 * Generate a texture from Graphics and add it
-	 * to the skin under key.
+	 * Generate a texture from a display object and add it under the texture key.
 	 * @param {string} key
 	 * @param {Graphics} g
 	 */
-	addAsTexture(key: string, g: Graphics): Texture {
+	addTexture(key: SkinKey, g: DisplayObject): Texture {
 
-		const renderer = PIXI.autoDetectRenderer();
+		const renderer = this.renderer ?? PIXI.autoDetectRenderer();
 		const size = g.getBounds();
 		const tex = PIXI.RenderTexture.create({ width: size.width, height: size.height });
 
 		renderer.render(g, { renderTexture: tex, clear: false });
 
-		this._skinData.set(key, tex);
+		this._textures.set(key, tex);
 		return tex;
 
 	}
@@ -371,12 +382,12 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 	 * Set the skinning data for a given key. The data can be style information,
 	 * a texture, or any information relevant to ui display.
 	 * A skinChanged event will be fired, notifying listeners of the change.
-	 * @param {string} key
+	 * @param key
 	 * @param {*} obj
 	 */
-	setSkinData(key: string, obj: Object) {
+	setSkinData(key: SkinKey, obj: UiData) {
 
-		this._skinData.set(key, obj);
+		this._textures.set(key, obj);
 		this.emit(SkinChanged, obj);
 
 	}
@@ -385,8 +396,8 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 	 * Get the skinning data associated with a key.
 	 * @param {string} key
 	 */
-	getSkinData<T>(key: string) {
-		return this._skinData.get(key);
+	getSkinData<T>(key: SkinKey) {
+		return this._textures.get(key);
 	}
 
 }

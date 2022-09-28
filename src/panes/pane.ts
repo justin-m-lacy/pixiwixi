@@ -93,7 +93,7 @@ export class Pane extends Container {
 		if (opts?.bg) {
 			this._bg = opts.bg;
 		} else if (this.skin) {
-			this._bg = this.skin.makePane(this.width, this.height);
+			this._bg = this.skin.makeFrame(this.width, this.height);
 		}
 		if (this._bg) {
 			this._bg.width = this.width;
