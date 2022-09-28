@@ -88,7 +88,7 @@ export class Pane extends Container {
 
 		}
 
-		if (this._bg != null && this.skin) {
+		if (!this.bg && this.skin) {
 			this._bg = this.skin.makePane(this.width, this.height);
 			if (this._bg) {
 				this.addChild(this._bg);
