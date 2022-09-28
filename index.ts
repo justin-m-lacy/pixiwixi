@@ -9,7 +9,7 @@ import { Button } from './src/controls/button';
 import { Checkbox } from './src/controls/checkbox';
 import { ProgressBar } from './src/controls/progress-bar';
 
-import { UiSkin } from './src/ui-skin';
+import { UiSkin, SkinKey, SkinChanged } from './src/ui-skin';
 import { DefaultSkin } from './src/defaults';
 
 import * as TweenUtils from './src/utils/tween-utils';
@@ -20,5 +20,5 @@ export { FlowLayout, FlowDirection } from './src/layout/flow-layout';
 
 export { enablewheel, WheelControl } from './src/utils/mouse-wheel';
 
-export { Button, Scrollbar, Pane, Checkbox, PixiWindow as Window, ScrollPane, UiSkin, ProgressBar, DefaultSkin, TweenUtils, LayoutUtils, CounterField, TabbedPane as MultiPane };
+export { Button, Scrollbar, Pane, Checkbox, PixiWindow as Window, ScrollPane, UiSkin, ProgressBar, SkinKey, SkinChanged, DefaultSkin, TweenUtils, LayoutUtils, CounterField, TabbedPane as MultiPane };
 
