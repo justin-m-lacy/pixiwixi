@@ -179,7 +179,8 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 	private readonly _textures: Map<SkinKey, UiData> = new Map();
 	private _fontFamily?: string | string[];
 
-	private renderer?: PIXI.Renderer;
+	public set renderer(v: PIXI.Renderer) { this._renderer = v }
+	private _renderer?: PIXI.Renderer;
 
 	/**
 	 *
@@ -367,7 +368,7 @@ export class UiSkin extends PIXI.utils.EventEmitter<'skinChanged'> {
 	 */
 	addTexture(key: SkinKey, g: DisplayObject): Texture {
 
-		const renderer = this.renderer ?? PIXI.autoDetectRenderer();
+		const renderer = this._renderer ?? PIXI.autoDetectRenderer();
 		const size = g.getBounds();
 		const tex = PIXI.RenderTexture.create({ width: size.width, height: size.height });
 
