@@ -1,5 +1,4 @@
-import { Pane, PaneOptions } from "@/panes/pane";
-
+import { Pane, PaneOptions } from '../panes/pane';
 export class Button extends Pane {
 
 	/**
