@@ -65,6 +65,9 @@ export class Pane extends Container {
 	private _showTween?: Tween<Pane>;
 	private _hideTween?: Tween<Pane>
 
+	get width() { return this.m_width }
+	get height() { return this.m_height }
+
 	/**
 	 * Private width/height is used to disentage background sizing from
 	 * parent scaling.
