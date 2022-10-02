@@ -1,6 +1,6 @@
 {
   "name": "pixiwixi",
-  "version": "0.8.16",
+  "version": "0.8.17",
   "description": "Basic Ui elements for pixi.js",
   "main": "lib/index.js",
   "scripts": {
