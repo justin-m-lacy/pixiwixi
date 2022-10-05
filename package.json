@@ -10,7 +10,7 @@
   "dependencies": {
     "@pixi/math": "6.3.0",
     "@tweenjs/tween.js": "^18",
-    "pixi.js": "^6.5.4"
+    "pixi.js": "6.5"
   },
   "keywords": [
     "pixi.js",
