@@ -1,7 +1,7 @@
 import { Text, InteractionEvent, DisplayObject, TextMetrics, TextStyle } from 'pixi.js';
 import { Pane } from '../panes/pane';
 import { FocusManager } from '../focus-manager';
-import { Tween } from '@tweenjs/tween.js';
+import { Tween } from 'tweedle.js';
 
 export class TextBox extends Pane {
 

@@ -1,5 +1,5 @@
-import { Container, DisplayObject } from 'pixi.js';
-import { Tween } from '@tweenjs/tween.js';
+import { DisplayObject } from 'pixi.js';
+import { Tween } from 'tweedle.js';
 
 /**
  * Create a tween for showing a UI element.

@@ -1,7 +1,7 @@
 import { Layout } from '@/layout/layout';
 import { Container, DisplayObject, Sprite, NineSlicePlane, InteractionEvent } from 'pixi.js';
 import { UiSkin } from '../ui-skin';
-import { Tween } from '@tweenjs/tween.js';
+import { Tween } from 'tweedle.js';
 import { makeShowTween, makeHidetween } from '../utils/tween-utils';
 import { DefaultSkin } from '../defaults';
 
@@ -98,6 +98,7 @@ export class Pane extends Container {
 		super();
 
 		// placing these variables here allows opts to override.
+
 		this.interactive = this.interactiveChildren = true;
 
 		this.skin = opts?.skin ?? DefaultSkin;
@@ -147,7 +148,7 @@ export class Pane extends Container {
 
 		if (parent.children.length > 0) {
 
-			let last = parent.children[parent.children.length - 1];
+			const last = parent.children[parent.children.length - 1];
 			if (last instanceof Sprite) {
 				lastY += last.y + (1 - last.anchor.y) * last.height;
 			} else {
