@@ -1,8 +1,7 @@
 /**
  * Basic Skin and UI Components for UI prototyping.
  */
-import * as PIXI from 'pixi.js';
-import { Graphics, Texture } from 'pixi.js';
+import { Graphics, Texture, TextStyle } from 'pixi.js';
 import { SkinKey, UiSkin } from './ui-skin';
 
 /**
@@ -13,7 +12,7 @@ export const MakeSkin = (opts?: Partial<UiSkin> & { foreColor?: number, backColo
 
 	let skin = new UiSkin(opts);
 
-	skin.smallStyle = skin.smallStyle || new PIXI.TextStyle({
+	skin.smallStyle = skin.smallStyle || new TextStyle({
 
 		fontFamily: skin.fontFamily || '',
 		fontSize: skin.smallSize || 12,

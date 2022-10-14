@@ -1,9 +1,8 @@
-import { Container, Ticker } from 'pixi.js';
-import * as PIXI from 'pixi.js';
+import { Container, Loader, Ticker } from 'pixi.js';
 
 export class ProgressBar extends Container {
 
-	get loader(): PIXI.Loader | undefined { return this._loader; }
+	get loader() { return this._loader; }
 
 	/**
 	 * {number}
@@ -20,7 +19,7 @@ export class ProgressBar extends Container {
 	 */
 	get isComplete(): boolean { return this._complete; }
 
-	private _loader?: PIXI.Loader;
+	private _loader?: Loader;
 	private _loading: boolean = false;
 	private _complete: boolean = false;
 
@@ -70,20 +69,20 @@ export class ProgressBar extends Container {
 
 	}
 
-	watch(loader: PIXI.Loader) {
+	watch(loader: Loader) {
 
 		this._loader = loader;
 		this.bar.scale.x = loader.progress;
 		this._loading = true;
 		this._complete = false;
 
-		PIXI.Ticker.shared.add(this.updateProgress, this);
+		Ticker.shared.add(this.updateProgress, this);
 
 	}
 
 	complete() {
 
-		PIXI.Ticker.shared.remove(this.updateProgress, this);
+		Ticker.shared.remove(this.updateProgress, this);
 		this._complete = true;
 		this._loading = false;
 
@@ -91,7 +90,7 @@ export class ProgressBar extends Container {
 
 	stop() {
 
-		PIXI.Ticker.shared.remove(this.updateProgress, this);
+		Ticker.shared.remove(this.updateProgress, this);
 		this._loading = false;
 		this._complete = false;
 		this._loader = undefined;

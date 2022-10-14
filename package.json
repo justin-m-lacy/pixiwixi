@@ -8,7 +8,7 @@
     "prepare": "tsc"
   },
   "dependencies": {
-    "@pixi/math": "6.3.0",
+    "@pixi/math": "6.5",
     "pixi.js": "6.5",
     "tweedle.js": "^2.0.0"
   },
