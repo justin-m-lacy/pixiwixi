@@ -87,8 +87,15 @@ export class Checkbox extends Container {
 
 		);
 
+		this.on('destroyed', this._onDestroy, this);
 		this.on('pointerup', (e: InteractionEvent) => this.checked = !this._checked);
 
+	}
+
+	private _onDestroy() {
+
+		this._tween?.stop();
+		this._tween = undefined;
 	}
 
 	/**

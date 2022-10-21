@@ -126,8 +126,17 @@ export class Pane extends Container {
 
 		}
 
+		this.on('destroyed', this._onDestroy, this);
 		this.on('pointerdown', (e: InteractionEvent) => e.stopPropagation());
 
+	}
+
+	private _onDestroy() {
+
+		this._hideTween?.stop();
+		this._showTween?.stop();
+		this._hideTween = undefined;
+		this._showTween = undefined;
 	}
 
 	/**
