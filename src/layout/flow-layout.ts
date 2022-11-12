@@ -1,4 +1,4 @@
-import { DisplayObject, Rectangle } from 'pixi.js';
+import { DisplayObject, Rectangle, Container } from 'pixi.js';
 import { Layout } from './layout';
 import { isLayout, ILayout } from './layout';
 
@@ -21,7 +21,7 @@ export class FlowLayout extends Layout {
 
 	}
 
-	public arrange(rect?: Rectangle) {
+	public arrange(container: Container, rect?: Rectangle) {
 
 		const padding = this.padding;
 		const children = this.children;

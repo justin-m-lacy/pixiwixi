@@ -2,7 +2,7 @@ import { Layout } from '@/layout/layout';
 import { Container, DisplayObject, Sprite, NineSlicePlane, InteractionEvent } from 'pixi.js';
 import { UiSkin } from '../ui-skin';
 import { Tween } from 'tweedle.js';
-import { makeShowTween, makeHidetween } from '../utils/tween-utils';
+import { makeShowTween, makeHideTween } from '../utils/tween-utils';
 import { DefaultSkin } from '../defaults';
 
 export type PaneOptions = {
@@ -18,14 +18,23 @@ export type PaneOptions = {
 	width?: number,
 	height?: number,
 
+	x?: number,
+	y?: number,
+
 	bg?: Container | NineSlicePlane
 };
 
 export class Pane extends Container {
 
+	/**
+	 * Tween that displays the pane.
+	 */
 	get showTween() { return this._showTween; }
 	set showTween(v) { this._showTween = v; }
 
+	/**
+	 * Tween that hides the pane.
+	 */
 	get hideTween() { return this._hideTween; }
 	set hideTween(v) { this._hideTween = v; }
 
@@ -52,10 +61,13 @@ export class Pane extends Container {
 	get bg(): Container | NineSlicePlane | undefined { return this._bg; }
 	set bg(v: Container | NineSlicePlane | undefined) { this._bg = v; }
 
+	/**
+	 * Layout that arranges pane elements.
+	 */
 	get layout() { return this._layout; }
 	set layout(v) {
 		this._layout = v;
-		if (v) v.arrange();
+		if (v) v.arrange(this);
 	}
 
 	private _layout?: Layout;
@@ -65,6 +77,10 @@ export class Pane extends Container {
 	private _showTween?: Tween<Pane>;
 	private _hideTween?: Tween<Pane>
 
+	/**
+	 * Width and height are overloaded to change the pane size
+	 * without affecting sizing of elements in pane.
+	 */
 	get width() { return this.m_width }
 	set width(v) {
 		this.m_width = v;
@@ -121,8 +137,9 @@ export class Pane extends Container {
 
 			if (opts.makeTweens) {
 				this.showTween = makeShowTween(this);
-				this.hideTween = makeHidetween(this);
+				this.hideTween = makeHideTween(this);
 			}
+			this.position.set(opts.x ?? 0, opts.y ?? 0);
 
 		}
 
@@ -146,43 +163,44 @@ export class Pane extends Container {
 	 * @param {number} [padY=0]
 	 * @param {Container} [parent=null]
 	 */
-	addContentY(clip: DisplayObject, padX: number = 0, padY: number = 0, parent?: Container) {
+	addContentY(clip: DisplayObject, padX: number = 0, padY: number = 0,) {
 
 		let lastY = padY;
 
 		if (clip instanceof Sprite) {
 			lastY += clip.anchor.y * clip.height;
 		}
-		if (!parent) parent = this;
 
-		if (parent.children.length > 0) {
+		if (this.children.length > 0) {
 
-			const last = parent.children[parent.children.length - 1];
-			if (last instanceof Sprite) {
-				lastY += last.y + (1 - last.anchor.y) * last.height;
-			} else {
-				lastY += last.y + last.getBounds().height;
+			const last = this.children[this.children.length - 1];
+			if (last !== this._bg) {
+				if (last instanceof Sprite) {
+					lastY += last.y + (1 - last.anchor.y) * last.height;
+				} else {
+					lastY += last.y + last.getBounds().height;
+				}
 			}
 
 		}
 
 		clip.position.set(padX, lastY);
 
-		parent.addChild(clip);
+		this.addChild(clip);
 
 	}
 
 	/**
 	 * Arrange items in pane using the pane's layout object.
 	 */
-	arrange(): void {
-		if (this._layout) this._layout.arrange();
+	public arrange(): void {
+		this._layout?.arrange(this);
 	}
 
 	/**
 	 * Toggle visibility.
 	 */
-	toggle(): void {
+	public toggle(): void {
 
 		if (this.visible && !this.hideTween?.isPlaying()) {
 
@@ -209,7 +227,7 @@ export class Pane extends Container {
 	 * the padding amount.
 	 * @param {DisplayObject} clip
 	 */
-	pad(clip: DisplayObject) {
+	public pad(clip: DisplayObject) {
 
 		const bounds = clip.getBounds();
 
@@ -224,14 +242,14 @@ export class Pane extends Container {
 	/**
 	 * Center a clip's width within this pane.
 	 */
-	centerX(clip: DisplayObject) {
+	public centerX(clip: DisplayObject) {
 		clip.x = 0.5 * (this.m_width - clip.getBounds().width);
 	}
 
 	/**
 	 * Center a clip's height within this pane.
 	 */
-	centerY(clip: DisplayObject) {
+	public centerY(clip: DisplayObject) {
 		clip.y = 0.5 * (this.m_height - clip.getBounds().height);
 	}
 
@@ -239,7 +257,7 @@ export class Pane extends Container {
 	 * Center a clip in the view.
 	 * @param {DisplayObject} clip
 	 */
-	center(clip: DisplayObject, pctX: number = 0.5, pctY: number = 0.5) {
+	public center(clip: DisplayObject, pctX: number = 0.5, pctY: number = 0.5) {
 
 		const bnds = clip.getBounds();
 		clip.x = pctX * (this.m_width - bnds.width);
@@ -247,12 +265,12 @@ export class Pane extends Container {
 
 	}
 
-	show(): void {
+	public show(): void {
 		this.interactive = true;
 		this.visible = true;
 	}
 
-	hide(): void {
+	public hide(): void {
 		this.interactive = false;
 		this.visible = false;
 	}

@@ -1,4 +1,4 @@
-import { DisplayObject, Rectangle } from 'pixi.js';
+import { DisplayObject, Rectangle, Container } from 'pixi.js';
 
 export enum Anchors {
 
@@ -17,7 +17,7 @@ export const isLayout = (item: any): item is ILayout => {
 
 export interface ILayout {
 
-	arrange(rect?: Rectangle): void;
+	arrange(container: Container, rect?: Rectangle): void;
 
 }
 
@@ -27,7 +27,7 @@ export abstract class SingleChildLayout implements ILayout {
 	constructor(child: DisplayObject | Layout) {
 		this.child = child;
 	}
-	abstract arrange(rect?: Rectangle): void;
+	abstract arrange(container: Container, rect?: Rectangle): void;
 
 }
 
@@ -41,6 +41,6 @@ export abstract class Layout implements ILayout {
 
 	}
 
-	abstract arrange(rect?: Rectangle): void;
+	abstract arrange(container: Container, rect?: Rectangle): void;
 
 }
