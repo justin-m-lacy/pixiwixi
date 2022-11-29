@@ -15,8 +15,16 @@ export class Button extends Pane {
 			if (opts.onClick) {
 				this.on('pointerup', opts.onClick);
 			}
-			if (opts.child) {
-				const child = this.addChild(opts.child);
+			const child = opts.child;
+			if (child) {
+
+				if (this.width < child.width) {
+					this.width = child.width;
+				}
+				if (this.height < child.height) {
+					this.height = child.height
+				}
+				this.addChild(child);
 
 				child.position.set(
 					(this.width - child.width) / 2,
