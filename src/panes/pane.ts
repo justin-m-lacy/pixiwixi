@@ -15,6 +15,7 @@ export type PaneOptions = {
 	 */
 	makeTweens?: boolean,
 
+	name?: string,
 	width?: number,
 	height?: number,
 
@@ -134,6 +135,8 @@ export class Pane extends Container {
 		}
 
 		if (opts) {
+
+			if (opts.name) this.name = opts.name;
 
 			if (opts.makeTweens) {
 				this.showTween = makeShowTween(this);
