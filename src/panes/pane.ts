@@ -1,82 +1,36 @@
-import { Layout } from '@/layout/layout';
-import { Container, DisplayObject, Sprite, NineSlicePlane, InteractionEvent } from 'pixi.js';
+import { Container, DisplayObject, NineSlicePlane, InteractionEvent, Rectangle } from 'pixi.js';
+import { ILayout } from '../layout/layout';
 import { UiSkin } from '../ui-skin';
-import { Tween } from 'tweedle.js';
-import { makeShowTween, makeHideTween } from '../utils/tween-utils';
-import { DefaultSkin } from '../defaults';
 
 export type PaneOptions = {
 
 	skin?: UiSkin,
 
-	/**
-	 * Whether to automatically create tweens that play when tween is hidden or shown.
-	 * Default is false.
-	 */
-	makeTweens?: boolean,
-
 	name?: string,
+
+	/**
+	 * Whether to create a mask for the content.
+	 * @default true
+	 */
+	createMask?: boolean,
+
 	width?: number,
 	height?: number,
+	interactive?: boolean,
 
+	/**
+	 * @deprecated
+	 */
+	padding?: number,
 	x?: number,
 	y?: number,
+
+	layout?: ILayout,
 
 	bg?: Container | NineSlicePlane
 };
 
-export class Pane extends Container {
-
-	/**
-	 * Tween that displays the pane.
-	 */
-	get showTween() { return this._showTween; }
-	set showTween(v) { this._showTween = v; }
-
-	/**
-	 * Tween that hides the pane.
-	 */
-	get hideTween() { return this._hideTween; }
-	set hideTween(v) { this._hideTween = v; }
-
-	/**
-	 * {number}
-	 */
-	get padding() { return this._padding; }
-	set padding(v) { this._padding = v; }
-
-
-	setWidth(v: number): void {
-		this.m_width = v;
-		if (this._bg) this._bg.width = v;
-	}
-
-	setHeight(v: number): void {
-		this.m_height = v;
-		if (this._bg) this._bg.height = v;
-	}
-
-	/**
-	 * Pane background that fills the pane behind all other elements.
-	 */
-	get bg(): Container | NineSlicePlane | undefined { return this._bg; }
-	set bg(v: Container | NineSlicePlane | undefined) { this._bg = v; }
-
-	/**
-	 * Layout that arranges pane elements.
-	 */
-	get layout() { return this._layout; }
-	set layout(v) {
-		this._layout = v;
-		if (v) v.arrange(this);
-	}
-
-	private _layout?: Layout;
-	private _padding: number = 12;
-	private _bg?: Container | NineSlicePlane;
-	skin?: UiSkin;
-	private _showTween?: Tween<Pane>;
-	private _hideTween?: Tween<Pane>
+export class Pane extends Container implements ILayout {
 
 	/**
 	 * Width and height are overloaded to change the pane size
@@ -85,18 +39,45 @@ export class Pane extends Container {
 	get width() { return this.m_width }
 	set width(v) {
 		this.m_width = v;
-		if (this._bg) {
-			this._bg.width = v;
+		if (this._bg) { this._bg.width = v; }
+
+		if (this.mask) {
+			// @ts-ignore
+			this.mask.width = v;
 		}
+
 	}
 	get height() { return this.m_height }
 	set height(v) {
 		this.m_height = v;
-		if (this._bg) {
-			this._bg.height = v;
+		if (this._bg) { this._bg.height = v; }
+		if (this.mask) {
+			// @ts-ignore
+			this.mask.height = v;
 		}
 	}
 
+	/**
+	 * Pane background that fills the pane behind all other elements.
+	 */
+	get bg(): Container | NineSlicePlane | undefined { return this._bg; }
+	set bg(v: Container | NineSlicePlane | undefined) {
+		if (this._bg) {
+			this.removeChild(this._bg);
+		}
+		this._bg = v;
+		if (v) {
+			this.addChildAt(v, 0);
+		}
+	}
+
+	/**
+	 * Background graphic for the panel.
+	 */
+	private _bg?: Container | NineSlicePlane;
+
+	public get skin() { return this._skin }
+	private _skin?: UiSkin;
 
 	/**
 	 * Private width/height is used to disentage background sizing from
@@ -104,6 +85,11 @@ export class Pane extends Container {
 	 */
 	private m_width: number;
 	private m_height: number;
+
+	/**
+	 * Object used to layout content.
+	 */
+	private _layout?: ILayout;
 
 	/**
 	 *
@@ -114,147 +100,80 @@ export class Pane extends Container {
 
 		super();
 
-		// placing these variables here allows opts to override.
+		this.interactive = this.interactiveChildren = opts?.interactive !== undefined ? opts.interactive : true;
 
-		this.interactive = this.interactiveChildren = true;
+		this._skin = opts?.skin;
 
-		this.skin = opts?.skin ?? DefaultSkin;
+		this.m_width = opts?.width ?? 128;
+		this.m_height = opts?.height ?? 128;
 
-		this.m_width = opts?.width ?? 100;
-		this.m_height = opts?.height ?? 100;
-
-		if (opts?.bg) {
-			this._bg = opts.bg;
-		} else if (this.skin) {
-			this._bg = this.skin.makeFrame(this.m_width, this.m_height);
-		}
+		this._bg = opts?.bg ?? this._skin?.makeFrame(this.m_width, this.m_height);
 		if (this._bg) {
 			this._bg.width = this.m_width;
 			this._bg.height = this.m_height;
 			this.addChild(this._bg);
+		} else {
+			this.width = this.m_width;
+			this.height = this.m_height;
 		}
+
 
 		if (opts) {
-
 			if (opts.name) this.name = opts.name;
-
-			if (opts.makeTweens) {
-				this.showTween = makeShowTween(this);
-				this.hideTween = makeHideTween(this);
-			}
 			this.position.set(opts.x ?? 0, opts.y ?? 0);
-
+			if (opts.layout) {
+				this.build(opts.layout);
+			}
+		}
+		if (opts?.createMask === undefined || opts?.createMask === true) {
+			this.createMask();
 		}
 
-		this.on('destroyed', this._onDestroy, this);
 		this.on('pointerdown', (e: InteractionEvent) => e.stopPropagation());
 
-	}
 
-	private _onDestroy() {
-
-		this._hideTween?.stop();
-		this._showTween?.stop();
-		this._hideTween = undefined;
-		this._showTween = undefined;
 	}
 
 	/**
-	 * Add content vertically from last child.
-	 * @param {DisplayObject} clip
-	 * @param {number} [padX=0]
-	 * @param {number} [padY=0]
-	 * @param {Container} [parent=null]
+	 * Set the initial layout of the Pane. Subclasses can override this function
+	 * in order to set a custom layout.
+	 * @param layout 
 	 */
-	addContentY(clip: DisplayObject, padX: number = 0, padY: number = 0,) {
+	public build(layout?: ILayout): void {
+		this._layout = layout;
+	}
 
-		let lastY = padY;
+	/**
+	 * Layout child elements of the pane using the current layout.
+	 * @param rect 
+	 * @returns this
+	 */
+	public layout(rect?: Rectangle): this {
 
-		if (clip instanceof Sprite) {
-			lastY += clip.anchor.y * clip.height;
+		//console.log(`pane layout...: ${rect?.x},${rect?.y} size: ${rect?.width},${rect?.height}`);
+		if (rect) {
+			if (this.width > rect.width) this.width = rect.width;
+			if (this.height > rect.height) this.height = rect.height;
+
+			this.x = rect.x + (rect.width - this.width) / 2;
+			this.y = rect.y + (rect.height - this.height) / 2;
 		}
 
-		if (this.children.length > 0) {
-
-			const last = this.children[this.children.length - 1];
-			if (last !== this._bg) {
-				if (last instanceof Sprite) {
-					lastY += last.y + (1 - last.anchor.y) * last.height;
-				} else {
-					lastY += last.y + last.getBounds().height;
-				}
-			}
-
-		}
-
-		clip.position.set(padX, lastY);
-
-		this.addChild(clip);
-
+		this._layout?.layout(new Rectangle(0, 0, this.m_width, this.m_height), this);
+		return this;
 	}
 
-	/**
-	 * Arrange items in pane using the pane's layout object.
-	 */
-	public arrange(): void {
-		this._layout?.arrange(this);
-	}
+	private createMask() {
 
-	/**
-	 * Toggle visibility.
-	 */
-	public toggle(): void {
-
-		if (this.visible && !this.hideTween?.isPlaying()) {
-
-			this._showTween?.stop();
-			if (this.hideTween) {
-				this.hideTween.start();
-			} else {
-				this.visible = true;
-			}
-		} else {
-
-			this.hideTween?.stop();
-			if (this.showTween) {
-				this.showTween.start();
-			} else {
-				this.visible = false;
-			}
+		const sprite = this.skin?.makeFrame(this.m_width, this.m_height);
+		if (sprite) {
+			this.addChild(sprite);
+			this.mask = sprite;
 		}
 
 	}
 
-	/**
-	 * Ensure the clip is padded from the pane edge's by
-	 * the padding amount.
-	 * @param {DisplayObject} clip
-	 */
-	public pad(clip: DisplayObject) {
-
-		const bounds = clip.getBounds();
-
-		if (clip.x < this._padding) clip.x = this._padding;
-		else if (clip.x + bounds.width > this.m_width) clip.x = this.m_width - bounds.width - this._padding;
-
-		if (clip.y < this._padding) clip.y = this._padding;
-		else if (clip.y + bounds.height > this.m_height) clip.y = this.m_height - bounds.height - this._padding;
-
-	}
-
-	/**
-	 * Center a clip's width within this pane.
-	 */
-	public centerX(clip: DisplayObject) {
-		clip.x = 0.5 * (this.m_width - clip.getBounds().width);
-	}
-
-	/**
-	 * Center a clip's height within this pane.
-	 */
-	public centerY(clip: DisplayObject) {
-		clip.y = 0.5 * (this.m_height - clip.getBounds().height);
-	}
+	public getBounds(): Rectangle { return new Rectangle(this.x, this.y, this.m_width, this.m_height); }
 
 	/**
 	 * Center a clip in the view.
@@ -266,16 +185,6 @@ export class Pane extends Container {
 		clip.x = pctX * (this.m_width - bnds.width);
 		clip.y = pctY * (this.m_height - bnds.height);
 
-	}
-
-	public show(): void {
-		this.interactive = true;
-		this.visible = true;
-	}
-
-	public hide(): void {
-		this.interactive = false;
-		this.visible = false;
 	}
 
 }

@@ -1,61 +1,82 @@
-import { DisplayObject, Rectangle, Container } from 'pixi.js';
-import { Layout } from './layout';
-import { isLayout, ILayout } from './layout';
+import { Rectangle, Container } from 'pixi.js';
+import { ListLayout, Orientation, Align, isLayout, alignItem } from './layout';
+import { ILayout } from './layout';
 
-export enum FlowDirection {
-	Horizontal,
-	Vertical
-}
 
-export class FlowLayout extends Layout {
 
-	flow: FlowDirection = FlowDirection.Horizontal;
-	padding: number = 0;
+/**
+ * Lays out container children in order without regard for size or available space.
+ */
+export class FlowLayout extends ListLayout {
 
-	constructor(flow: FlowDirection = FlowDirection.Horizontal, padding: number = 4) {
+	private flow: Orientation = Orientation.Horizontal;
 
-		super();
+	private align: Align;
 
-		this.flow = flow;
-		this.padding = padding;
+	private spacing: number = 0;
+
+
+
+	constructor(params: { items?: (ILayout | Container)[], flow?: Orientation, spacing?: number, align?: Align }) {
+
+		super(params.items);
+
+
+		this.flow = params.flow ?? Orientation.Vertical;
+		this.spacing = params.spacing ?? 0;
+		this.align = params.align ?? Align.Center;
 
 	}
 
-	public arrange(container: Container, rect?: Rectangle) {
 
-		const padding = this.padding;
-		const children = this.children;
-		const len = children.length;
-		let clip: DisplayObject | ILayout;
-		let bounds: Rectangle;
+	public layout(rect: Rectangle, parent: Container): Container {
+
+		const padding = this.spacing;
+		const items = this.items;
+		const len = items.length;
+
+		/// space used.
+		const available = new Rectangle(rect.x, rect.y, rect.width, rect.height);
+
+
 		let sizeProp: 'width' | 'height';
 		let prop: 'x' | 'y';
+		let alignAxis: Orientation;
 
-		if (this.flow === FlowDirection.Horizontal) {
+		if (this.flow === Orientation.Horizontal) {
 			prop = 'x';
 			sizeProp = 'width';
+			alignAxis = Orientation.Vertical;
 		} else {
 			prop = 'y';
 			sizeProp = 'height';
+			alignAxis = Orientation.Horizontal;
 		}
 
-		let v: number = this.padding;
+		let child: Container | ILayout;
+
 
 		for (let i = 0; i < len; i++) {
 
-			clip = children[i];
-
-			if (isLayout(clip)) {
-
+			child = items[i];
+			if (isLayout(child)) {
+				child = child.layout(available);
 			} else {
-				if (clip.visible === false) continue;
-				clip[prop] = v;
-				bounds = clip.getBounds();
-				v += padding + bounds[sizeProp];
+				child[prop] = available[prop];
 			}
+			console.log(`child pos: ${child[prop]}`);
+
+			/// advance available rect.
+			available[prop] = child[prop] + child[sizeProp] + padding;
+			// decrease available space.
+			available[sizeProp] -= (child[sizeProp] + padding);
+
+			alignItem(child, rect, alignAxis, this.align);
 
 		}
 
-	}
+		return parent;
+
+	} // arrange()
 
 }
